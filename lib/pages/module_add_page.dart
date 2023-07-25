@@ -194,16 +194,45 @@ class _ModuleAddPageState extends State<ModuleAddPage> {
               ),
               GestureDetector(
                 onTap: (){
-                  widget.module.moduleName = moduleNameController.value.text;
-                  widget.module.moduleId = moduleIdController.value.text;
+                  String newName =  moduleNameController.value.text;
+                  String newID = moduleIdController.value.text;
+
                   if(widget.isModuleNew) {
-                    widget.moduleList.comp.add(widget.module);
-                    widget.addOverPageController.animateToPage(1, duration: Duration(milliseconds: animationDelayMilliseconds), curve: Curves.easeOut);
-                    Timer(Duration(milliseconds: 50), () {widget.addPageController.animateToPage(1, duration: Duration(milliseconds: animationDelayMilliseconds), curve: Curves.easeOut);});
+                    bool doesIdExist = widget.moduleList.findByID(newID) != null;
+                    bool doesNameExist = widget.moduleList.findByName(newName) != 0;
+
+                    final snackBar = SnackBar(content: Text(doesNameExist? 'Same Name! Try again.' : (doesIdExist? 'Same ID! Try again.': 'Module successfully added.')),);
+                    ScaffoldMessenger.of(context).showSnackBar(snackBar);
+
+                    if(!doesIdExist && !doesNameExist) {
+                      widget.module.moduleName = newName;
+                      widget.module.moduleId = newID;
+                      widget.moduleList.comp.add(widget.module);
+                      widget.addOverPageController.animateToPage(1, duration: Duration(milliseconds: animationDelayMilliseconds), curve: Curves.easeOut);
+                      Timer(Duration(milliseconds: 50), () {widget.addPageController.animateToPage(1, duration: Duration(milliseconds: animationDelayMilliseconds), curve: Curves.easeOut);});
+                    }
                   }
-                  else if(!widget.isModuleNew) {
-                    widget.addOverPageController.animateToPage(1, duration: Duration(milliseconds: animationDelayMilliseconds), curve: Curves.easeOut);
-                    Timer(Duration(milliseconds: 50), () {widget.addPageController.animateToPage(1, duration: Duration(milliseconds: animationDelayMilliseconds), curve: Curves.easeOut);});
+                  else {
+                    Module? foundByName = widget.moduleList.findByName(newName);
+
+                    final snackBar = SnackBar(
+                      content: Text(foundByName != null && foundByName != widget.module? 'Same Name! Try again.' : 'Module successfully edited.'),);
+                    ScaffoldMessenger.of(context).showSnackBar(snackBar);
+
+                    if(foundByName == null || foundByName == widget.module) {
+                      widget.module.moduleName = newName;
+                      widget.module.moduleId = newID;
+                      widget.addOverPageController.animateToPage(
+                          1, duration: Duration(
+                          milliseconds: animationDelayMilliseconds),
+                          curve: Curves.easeOut);
+                      Timer(Duration(milliseconds: 50), () {
+                        widget.addPageController.animateToPage(1,
+                            duration: Duration(
+                                milliseconds: animationDelayMilliseconds),
+                            curve: Curves.easeOut);
+                      });
+                    }
                   }
                 },
                 child: Container(height: 60, decoration: BoxDecoration(
@@ -249,10 +278,11 @@ class _ModuleAddPageState extends State<ModuleAddPage> {
                   ),
                 ),
                 GestureDetector(
-                  onTap: () {
-                    widget.moduleList.comp.remove(widget.module);
+                  onTap: () {final snackBar = SnackBar(content: Text('Module successfully deleted.'),);
+                  ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                  widget.moduleList.comp.remove(widget.module);
                     widget.addOverPageController.animateToPage(1, duration: Duration(milliseconds: animationDelayMilliseconds), curve: Curves.easeOut);
-                    Timer(Duration(milliseconds: 50), () {widget.addPageController.animateTo(1, duration: Duration(milliseconds: animationDelayMilliseconds), curve: Curves.easeOut);});
+                    Timer(Duration(milliseconds: 50), () {widget.addPageController.animateToPage(1, duration: Duration(milliseconds: animationDelayMilliseconds), curve: Curves.easeOut);});
                   },
                   child: Container(height: 60, decoration: BoxDecoration(
                       gradient: LinearGradient(

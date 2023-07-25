@@ -36,8 +36,9 @@ class IotCondition {
 
   bool evaluate(){
     if(isTimeCondition) {
+      print("time condition");
       DateTime nowTime = DateTime.now();
-      if(!weekDays[nowTime.weekday]) return false;
+      if(!ListCompare(weekDays, [false,false,false,false,false,false,false]) && !weekDays[nowTime.weekday]) return false;
       if(timeRange[0] > timeRange[2]) return false;
       if(timeRange[0] == timeRange[2] && timeRange[1] > timeRange[3]) return false;
       if(nowTime.hour > timeRange[0] && nowTime.hour < timeRange[2]) return true;
@@ -49,7 +50,10 @@ class IotCondition {
     if(_module!.type == Module.ONOFF) {
       return _module!.value == _targetValue;
     }
-    return (_module!.value < _boundValue![1] && _module!.value >= _boundValue![0]);
+    if(!_module!.decimal)
+      return (_module!.doubleVal.round() <= _boundValue![1].round() && _module!.doubleVal.round() >= _boundValue![0].round());
+    else
+      return (_module!.value <= _boundValue![1] && _module!.value >= _boundValue![0]);
   }
 
   String weekDayString() {
@@ -96,31 +100,46 @@ class IotConditionList {
     List<IotCondition> stack = [];
 
     for(int i = 0; i < conditions.length; i++) {
-      if(conditions[i].evaluate() && !skip) stack.add(conditions[i]);
-      if(skip) stack.clear();
+      bool conditionEvaluation = conditions[i].evaluate();
+      bool conditionAnd = conditions[i].and;
+      print("condition $i : $conditionEvaluation");
+      if(conditionEvaluation && !skip) stack.add(conditions[i]);
 
       if(previousAnd == false) {
-        if(conditions[i].and == false && conditions[i].evaluate() == true) return true;
-        else if(conditions[i].and == false && conditions[i].evaluate() == false) null;
-        else if(conditions[i].and == true && conditions[i].evaluate() == true) evaluation |= true;
-        else if(conditions[i].and == true && conditions[i].evaluate() == false) skip = true;
+        if(conditionAnd == false && conditionEvaluation == true) {
+          evaluation = true;
+          break;
+        } else if(conditionAnd == false && conditionEvaluation == false) null;
+        else if(conditionAnd == true && conditionEvaluation == true) evaluation |= true;
+        else if(conditionAnd == true && conditionEvaluation == false) {
+          evaluation = false;
+          skip = true;
+        }
       }
       else {
-        if(conditions[i].and == false && conditions[i].evaluate() == true) {
+        if(conditionAnd == false && conditionEvaluation == true) {
           if(skip) skip = false;
-          else return true;
+          else {
+            evaluation = true;
+            break;
+          }
         }
-        else if(conditions[i].and == false && conditions[i].evaluate() == false) evaluation = false;
-        else if(conditions[i].and == true && conditions[i].evaluate() == true && !skip) evaluation |= true;
-        else if(conditions[i].and == true && conditions[i].evaluate() == false && !skip) skip = true;
+        else if(conditionAnd == false && conditionEvaluation == false) evaluation = false;
+        else if(conditionAnd == true && conditionEvaluation == true && !skip) evaluation |= true;
+        else if(conditionAnd == true && conditionEvaluation == false && !skip) {
+          evaluation = false;
+          skip = true;
+        }
       }
 
-      previousAnd = conditions[i].and;
+      if(skip) stack.clear();
+      previousAnd = conditionAnd;
     }
 
     _once = false;
     for(IotCondition condition in stack) {
       if(condition.isTimeCondition && condition.weekDays.reduce((a,b) => a || b) == false) _once = true;
+      print("once : ${_once}");
     }
 
     return evaluation;

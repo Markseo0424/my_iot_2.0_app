@@ -66,4 +66,14 @@ class ModuleList {
     return null;
   }
 
+
+  Module? findByName(String name) {
+    for(Module module in comp) {
+      if(module.moduleName == name) {
+        return module;
+      }
+    }
+    return null;
+  }
+
 }

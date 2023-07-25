@@ -56,16 +56,24 @@ class _ScheduleAddPageState extends State<ScheduleAddPage> with TickerProviderSt
 
   @override
   Widget build(BuildContext context) {
-    if(conditionOpen || conditionShow) {
-      conditionShow = true;
-      scrollController.animateTo(150, duration: Duration(milliseconds: animationDelayMilliseconds), curve: Curves.easeOut);
-    }
-    else if (actionOpen || actionShow) {
-      actionShow = true;
-      scrollController.animateTo(200, duration: Duration(milliseconds: animationDelayMilliseconds), curve: Curves.easeOut);
-    }
-    else {
-      scrollController.animateTo(0, duration: Duration(milliseconds: animationDelayMilliseconds), curve: Curves.easeOut);
+    if(scrollController.hasClients) {
+      if (conditionOpen || conditionShow) {
+        conditionShow = true;
+        scrollController.animateTo(
+            150, duration: Duration(milliseconds: animationDelayMilliseconds),
+            curve: Curves.easeOut);
+      }
+      else if (actionOpen || actionShow) {
+        actionShow = true;
+        scrollController.animateTo(
+            200, duration: Duration(milliseconds: animationDelayMilliseconds),
+            curve: Curves.easeOut);
+      }
+      else {
+        scrollController.animateTo(
+            0, duration: Duration(milliseconds: animationDelayMilliseconds),
+            curve: Curves.easeOut);
+      }
     }
 
     return SingleChildScrollView(
@@ -114,7 +122,7 @@ class _ScheduleAddPageState extends State<ScheduleAddPage> with TickerProviderSt
           AnimatedContainer(duration: Duration(milliseconds: animationDelayMilliseconds),
               curve: Curves.easeOut,height: 50 + calculateConditionHeight(), color: Colors.black.withOpacity(conditionShow? 0.5: 0)),
           AnimatedContainer(duration: Duration(milliseconds: animationDelayMilliseconds),
-              curve: Curves.easeOut,height: calculateActionHeight() + 50, color: Colors.black.withOpacity(actionOpen? 0.5: 0)),
+              curve: Curves.easeOut,height: calculateActionHeight() + 50, color: Colors.black.withOpacity(actionShow? 0.5: 0)),
         ],),
         Padding(
             padding: EdgeInsets.only(
@@ -341,16 +349,51 @@ class _ScheduleAddPageState extends State<ScheduleAddPage> with TickerProviderSt
                   ),
                   GestureDetector(
                     onTap: () {
-                      widget.schedule.scheduleName = scheduleNameController.value.text;
-                      if(widget.isScheduleNew && conditionList.conditions.isNotEmpty && actionList.actions.isNotEmpty) {
-                        widget.scheduleList.scheduleList.add(widget.schedule);
-                        widget.addOverPageController.animateToPage(1, duration: Duration(milliseconds: animationDelayMilliseconds), curve: Curves.easeOut);
-                        Timer(Duration(milliseconds: 50), () {widget.addPageController.animateToPage(1, duration: Duration(milliseconds: animationDelayMilliseconds), curve: Curves.easeOut);});
+                      String newName = scheduleNameController.value.text;
+                      Schedule? foundByName = widget.scheduleList.findByName(newName);
+                      String snackBarText = "";
+                      if(foundByName != null && foundByName != widget.schedule) {
+                        snackBarText = "Same name! Try again.";
                       }
-                      else if(!widget.isScheduleNew && conditionList.conditions.isNotEmpty && actionList.actions.isNotEmpty) {
-                        widget.addOverPageController.animateToPage(1, duration: Duration(milliseconds: animationDelayMilliseconds), curve: Curves.easeOut);
-                        Timer(Duration(milliseconds: 50), () {widget.addPageController.animateToPage(1, duration: Duration(milliseconds: animationDelayMilliseconds), curve: Curves.easeOut);});
+                      else {
+                        widget.schedule.scheduleName = newName;
+                        if (widget.isScheduleNew &&
+                            conditionList.conditions.isNotEmpty &&
+                            actionList.actions.isNotEmpty) {
+                          widget.scheduleList.scheduleList.add(widget.schedule);
+                          widget.addOverPageController.animateToPage(1,
+                              duration: Duration(
+                                  milliseconds: animationDelayMilliseconds),
+                              curve: Curves.easeOut);
+                          Timer(Duration(milliseconds: 50), () {
+                            widget.addPageController.animateToPage(1,
+                                duration: Duration(
+                                    milliseconds: animationDelayMilliseconds),
+                                curve: Curves.easeOut);
+                          });
+                          snackBarText = "Schedule successfully added.";
+                        }
+                        else if (!widget.isScheduleNew &&
+                            conditionList.conditions.isNotEmpty &&
+                            actionList.actions.isNotEmpty) {
+                          widget.addOverPageController.animateToPage(1,
+                              duration: Duration(
+                                  milliseconds: animationDelayMilliseconds),
+                              curve: Curves.easeOut);
+                          Timer(Duration(milliseconds: 50), () {
+                            widget.addPageController.animateToPage(1,
+                                duration: Duration(
+                                    milliseconds: animationDelayMilliseconds),
+                                curve: Curves.easeOut);
+                          });
+                          snackBarText = "Schedule successfully edited.";
+                        }
+                        else {
+                          snackBarText = "Condition or Action is not filled.";
+                        }
                       }
+                      final snackBar = SnackBar(content: Text(snackBarText),);
+                      ScaffoldMessenger.of(context).showSnackBar(snackBar);
                     },
                     child: Container(height: 60, decoration: BoxDecoration(
                         gradient: LinearGradient(
@@ -432,7 +475,7 @@ class _ScheduleAddPageState extends State<ScheduleAddPage> with TickerProviderSt
                 }),
               ],)),
           AnimatedContainer(duration: Duration(milliseconds: animationDelayMilliseconds),
-              curve: Curves.easeOut,height: 50 + calculateConditionHeight(), color: Colors.black.withOpacity(actionOpen? 0.5: 0),
+              curve: Curves.easeOut,height: 50 + calculateConditionHeight(), color: Colors.black.withOpacity(actionShow? 0.5: 0),
               child: Stack(children: [
                 GestureDetector(behavior: HitTestBehavior.translucent, onTap: () {
                   setState(() {

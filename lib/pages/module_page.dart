@@ -44,42 +44,47 @@ class _ModulePageState extends State<ModulePage> {
 
     return Scaffold(
       backgroundColor: Colors.transparent,
-      body: Stack(
-        children: [
-          Container(
-            height: 150,
-            transform: Matrix4.identity()..rotateZ(-widget.page*0.5)..translate(-100*widget.page),
-            margin: const EdgeInsets.only(
-              bottom: 30,
-              left: 15,
-              right: 15,
-            ),
-            child: const Align(
-                alignment: Alignment.bottomLeft,
-                child: Text(
-                    "MODULES",
-                    style: TextStyle(
-                      fontFamily: "pretendard",
-                      color: Color(white),
-                      fontSize: 50,
-                      fontWeight: FontWeight.w700,
+      body: ValueListenableBuilder<int> (
+        valueListenable: widget.moduleChangeListener,
+        builder: (context, _, __) {
+          return Stack(
+            children: [
+              Container(
+                height: 150,
+                transform: Matrix4.identity()..rotateZ(-widget.page*0.5)..translate(-100*widget.page),
+                margin: const EdgeInsets.only(
+                  bottom: 30,
+                  left: 15,
+                  right: 15,
+                ),
+                child: const Align(
+                    alignment: Alignment.bottomLeft,
+                    child: Text(
+                        "MODULES",
+                        style: TextStyle(
+                          fontFamily: "pretendard",
+                          color: Color(white),
+                          fontSize: 50,
+                          fontWeight: FontWeight.w700,
+                        )
                     )
-                )
-            ),
-          ),
-          Container(
-            margin: const EdgeInsets.only(top: 180),
-            child: CustomGrid(
-              isSquare: true,
-              page: widget.page,
-              reOrderable: widget.isEditable,
-              atDispose: (reorderList){
-                widget.moduleList.reOrder(reorderList);
-              },
-              children: renderModules()),
-          ),
-        ],
-      ),
+                ),
+              ),
+              Container(
+                margin: const EdgeInsets.only(top: 180),
+                child: CustomGrid(
+                    isSquare: true,
+                    page: widget.page,
+                    reOrderable: widget.isEditable,
+                    atDispose: (reorderList){
+                      widget.moduleList.reOrder(reorderList);
+                    },
+                    children: renderModules()),
+              ),
+            ],
+          );
+        },
+      )
     );
   }
 
@@ -360,6 +365,7 @@ class _ModulePageState extends State<ModulePage> {
                     )
                   ),
                   CustomSlider(
+                    moduleChangeListener : widget.moduleChangeListener,
                     left: 25,
                     right: 75,
                     handle: Container(width:50,height:50,decoration: BoxDecoration(

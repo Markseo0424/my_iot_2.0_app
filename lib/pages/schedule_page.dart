@@ -206,7 +206,9 @@ class _SchedulePageState extends State<SchedulePage> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Expanded(child:
+                Expanded(
+                  flex: 2,
+                  child:
                   Align(alignment: Alignment.centerLeft, child: Padding(padding: EdgeInsets.only(left:40), child: AnimatedDefaultTextStyle(
                     style: TextStyle(
                       fontFamily: "pretendard",
@@ -220,8 +222,9 @@ class _SchedulePageState extends State<SchedulePage> {
                     child: Text(scheduleName,),
                   ))),
                   ),
-
-                Expanded(child:
+                Expanded(
+                  flex: 1,
+                  child:
                   Padding(
                     padding: EdgeInsets.only(right:40),child:
                     Align(

@@ -10,6 +10,7 @@ class CustomSlider extends StatefulWidget {
   final double left;
   final double right;
   final double initFraction;
+  final ValueNotifier<int>? moduleChangeListener;
   final void Function(double fraction)? onStartChange;
   final void Function(double fraction)? onChange;
   final void Function(double fraction)? onEndChange;
@@ -22,6 +23,7 @@ class CustomSlider extends StatefulWidget {
     this.left = 0,
     this.right = 0,
     this.initFraction = 0,
+    this.moduleChangeListener,
     Key?key,
   }): super(key:key);
 
@@ -40,6 +42,23 @@ class _CustomSliderState extends State<CustomSlider> {
   @override void initState() {
     // TODO: implement initState
     super.initState();
+    if(widget.moduleChangeListener != null) {
+      widget.moduleChangeListener!.addListener(setDirty);
+    }
+  }
+
+  setDirty() {
+    setState(() {
+      init = true;
+    });
+  }
+
+  @override
+  void dispose() {
+    if(widget.moduleChangeListener != null) {
+      widget.moduleChangeListener!.removeListener(setDirty);
+    }
+    super.dispose();
   }
 
   @override

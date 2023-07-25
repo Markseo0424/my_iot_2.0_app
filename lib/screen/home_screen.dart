@@ -97,9 +97,10 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin{
     setState(() {
       addPage = addPageController.page;
       if((addPage??0) != 1) {
-        pageController.jumpToPage(memorizePage);
-        //moduleEditable = false;
-        //scheduleEditable = false;
+        if(pageController.hasClients)
+          pageController.jumpToPage(memorizePage);
+        moduleEditable = false;
+        scheduleEditable = false;
       }
     });
   }
@@ -279,6 +280,9 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin{
                                   scheduleEditable = !scheduleEditable;
                                 });
                               }
+                              else if(value == 2) {
+                                scheduleList.evaluateSchedules(moduleChangeListener);
+                              }
                               else {
                                 addPageController.animateToPage(0,duration: Duration(milliseconds: animationDelayMilliseconds), curve: Curves.easeOut);
                                 Timer(Duration(milliseconds: 50), () => addPageOverController.animateToPage(0,duration: Duration(milliseconds: animationDelayMilliseconds), curve: Curves.easeOut));
@@ -293,6 +297,11 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin{
                                 value: 1,
                                 child: Text('settings', style: pretendard(FontWeight.w700, 16, Color(black))),
                               ),
+                              if((page??0) == 1)
+                                PopupMenuItem<int>(
+                                  value: 2,
+                                  child: Text('evaluate schedules', style: pretendard(FontWeight.w700, 16, Color(black))),
+                                ),
                             ],
                           ),
                         ),
@@ -392,7 +401,6 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin{
         ),
     );
   }
-
 
   TextStyle pretendard(FontWeight weight, double size, Color color){
     return TextStyle(

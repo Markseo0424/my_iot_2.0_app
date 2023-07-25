@@ -1,5 +1,7 @@
 import 'dart:async';
 
+import 'package:flutter/cupertino.dart';
+
 import 'module.dart';
 
 class IotAction {
@@ -40,12 +42,13 @@ class IotActionList {
   List<IotAction> actions = [];
   IotActionList(this.actions);
 
-  void doActions() {
+  void doActions(ValueNotifier<int> moduleChangeListener) {
     double totalDelay = 0;
     for(IotAction action in actions) {
       if (action.isTimeDelay) totalDelay += action.delayValue;
       Timer(Duration(milliseconds: (totalDelay * 1000).round()), () {
         action.doAction();
+        moduleChangeListener.value *= -1;
       });
     }
   }
