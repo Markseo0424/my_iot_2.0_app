@@ -7,6 +7,7 @@ import 'package:myiot/components/custom_grid.dart';
 import 'package:myiot/components/colors.dart';
 import 'package:myiot/components/custom_slider.dart';
 import 'package:flutter/material.dart';
+import 'package:myiot/types/iot_memories.dart';
 
 import '../types/schedule.dart';
 
@@ -76,8 +77,9 @@ class _SchedulePageState extends State<SchedulePage> {
               vGridStandard: 100,
               page: widget.page,
               reOrderable: widget.isEditable,
-              atDispose: (reorderList){
+              atReorder: (reorderList){
                 widget.scheduleList.reOrder(reorderList);
+                IotMemories.memoryUpdate();
               },
               children: [
                 ...widget.scheduleList.scheduleList.map((schedule) {
@@ -87,6 +89,7 @@ class _SchedulePageState extends State<SchedulePage> {
                         widget.onEditSchedule(schedule);
                       } else {
                         schedule.on = !schedule.on;
+                        IotMemories.memoryUpdate();
                       }
                     });
                   });
@@ -182,6 +185,7 @@ class _SchedulePageState extends State<SchedulePage> {
 
   GridElement renderSchedule({String scheduleName = "", bool onOff = false, void Function()? onTap}) {
     return renderModule(
+      key: ValueKey<String>(scheduleName),
         width: 1,
         decoration: onOff? BoxDecoration(
           gradient: LinearGradient(

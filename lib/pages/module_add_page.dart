@@ -5,6 +5,7 @@ import "package:flutter/material.dart";
 import "package:myiot/components/constants.dart";
 import "package:myiot/components/colors.dart";
 import "package:flutter_svg/flutter_svg.dart";
+import "package:myiot/types/iot_memories.dart";
 
 import "../types/module.dart";
 
@@ -199,7 +200,7 @@ class _ModuleAddPageState extends State<ModuleAddPage> {
 
                   if(widget.isModuleNew) {
                     bool doesIdExist = widget.moduleList.findByID(newID) != null;
-                    bool doesNameExist = widget.moduleList.findByName(newName) != 0;
+                    bool doesNameExist = widget.moduleList.findByName(newName) != null;
 
                     final snackBar = SnackBar(content: Text(doesNameExist? 'Same Name! Try again.' : (doesIdExist? 'Same ID! Try again.': 'Module successfully added.')),);
                     ScaffoldMessenger.of(context).showSnackBar(snackBar);
@@ -208,6 +209,7 @@ class _ModuleAddPageState extends State<ModuleAddPage> {
                       widget.module.moduleName = newName;
                       widget.module.moduleId = newID;
                       widget.moduleList.comp.add(widget.module);
+                      IotMemories.memoryUpdate();
                       widget.addOverPageController.animateToPage(1, duration: Duration(milliseconds: animationDelayMilliseconds), curve: Curves.easeOut);
                       Timer(Duration(milliseconds: 50), () {widget.addPageController.animateToPage(1, duration: Duration(milliseconds: animationDelayMilliseconds), curve: Curves.easeOut);});
                     }
@@ -222,6 +224,7 @@ class _ModuleAddPageState extends State<ModuleAddPage> {
                     if(foundByName == null || foundByName == widget.module) {
                       widget.module.moduleName = newName;
                       widget.module.moduleId = newID;
+                      IotMemories.memoryUpdate();
                       widget.addOverPageController.animateToPage(
                           1, duration: Duration(
                           milliseconds: animationDelayMilliseconds),
@@ -281,6 +284,7 @@ class _ModuleAddPageState extends State<ModuleAddPage> {
                   onTap: () {final snackBar = SnackBar(content: Text('Module successfully deleted.'),);
                   ScaffoldMessenger.of(context).showSnackBar(snackBar);
                   widget.moduleList.comp.remove(widget.module);
+                  IotMemories.memoryUpdate();
                     widget.addOverPageController.animateToPage(1, duration: Duration(milliseconds: animationDelayMilliseconds), curve: Curves.easeOut);
                     Timer(Duration(milliseconds: 50), () {widget.addPageController.animateToPage(1, duration: Duration(milliseconds: animationDelayMilliseconds), curve: Curves.easeOut);});
                   },

@@ -13,6 +13,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:myiot/pages/setting_page.dart';
 import 'package:myiot/types/iot_action.dart';
 import 'package:myiot/types/iot_condition.dart';
+import 'package:myiot/types/iot_memories.dart';
 
 import '../pages/schedule_add_page.dart';
 import '../pages/schedule_page.dart';
@@ -27,27 +28,9 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin{
-  ModuleList moduleList = ModuleList([
-    Module(moduleName: "MAIN", moduleId: "0424", type: Module.ONOFF)
-      ..setValue = true,
-    Module(moduleName: "SUB", moduleId: "1025", type: Module.ONOFF)
-      ..setValue = false,
-    Module(moduleName: "에어컨 온도", moduleId: "4242", type: Module.SLIDER)
-      ..setValue = 20.0
-    ..setUnit = "℃"
-    ..setValueRange = <double>[18,30]
-    ..setDecimal = false,
-    Module(moduleName: "습도", moduleId: "2525", type: Module.VALUE)
-      ..setValue = 62.8
-      ..setUnit = "%"
-      ..setValueRange = <double>[0,100]
-      ..setDecimal = true,
-  ]);
-  ScheduleList scheduleList = ScheduleList([
-    Schedule("HELLO", IotConditionList([]), IotActionList([]))..on=true,
-    Schedule("WORLD", IotConditionList([]), IotActionList([])),
-  ]);
-
+  IotMemories memories = IotMemories();
+  ModuleList moduleList = ModuleList([]);
+  ScheduleList scheduleList = ScheduleList([]);
 
   Schedule paramSchedule = Schedule("", IotConditionList([]), IotActionList([]));
   bool isScheduleNew = true;
@@ -78,8 +61,16 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin{
   @override
   void initState() {
     super.initState();
+    memories.getFromPref(() {
+      setState(() {
+        moduleList = memories.moduleList;
+        scheduleList = memories.scheduleList;
+        //print("finished load");
+      });
+    });
     pageController.addListener(pageListener);
     addPageController.addListener(addPageListener);
+    IotMemories.memoryUpdateListener.addListener(memoryUpdateListener);
   }
 
   pageListener() {
@@ -105,11 +96,17 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin{
     });
   }
 
+  memoryUpdateListener() {
+    //memories.printDebugMessage();
+    memories.saveToPref();
+  }
+
   @override
   void dispose() {
     // TODO: implement dispose
     pageController.removeListener(pageListener);
     addPageController.removeListener(addPageListener);
+    IotMemories.memoryUpdateListener.addListener(memoryUpdateListener);
     super.dispose();
   }
 
@@ -391,7 +388,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin{
                   physics: NeverScrollableScrollPhysics(),
                   scrollDirection: Axis.vertical,
                   children: [
-                    SettingPage(addPageController: addPageController, addOverPageController: addPageOverController, page: page),
+                    SettingPage(addPageController: addPageController, addOverPageController: addPageOverController, page: page, memories: memories),
                     Container(),
                     if(memorizePage == 0) ModuleAddPage(addPageController: addPageController, addOverPageController: addPageOverController, moduleList: moduleList, module:  paramModule, isModuleNew: isModuleNew,)
                     else ScheduleAddPage(addPageController: addPageController, addOverPageController: addPageOverController, moduleList: moduleList,scheduleList: scheduleList, schedule: paramSchedule, isScheduleNew: isScheduleNew,),

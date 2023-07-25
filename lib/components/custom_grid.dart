@@ -4,17 +4,17 @@ import 'package:flutter/material.dart';
 
 class CustomGrid extends StatefulWidget {
   final List<GridElement> elements = [
-    const GridElement(boxColor: Colors.red, boxText: "빨강", width: 2,),
-    const GridElement(boxColor: Colors.orange, boxText: "주황",),
-    const GridElement(boxColor: Colors.yellow, boxText: "노랑", width: 2,),
-    const GridElement(boxColor: Colors.green, boxText: "초록",),
-    const GridElement(boxColor: Colors.blue, boxText: "파랑",),
+    GridElement(boxColor: Colors.red, boxText: "빨강", width: 2,),
+    GridElement(boxColor: Colors.orange, boxText: "주황",),
+    GridElement(boxColor: Colors.yellow, boxText: "노랑", width: 2,),
+    GridElement(boxColor: Colors.green, boxText: "초록",),
+    GridElement(boxColor: Colors.blue, boxText: "파랑",),
   ];
 
   final double page;
   final List<GridElement>? children;
   final bool reOrderable;
-  final void Function(List<int> reorderedElement)? atDispose;
+  final void Function(List<int> reorderedElement)? atReorder;
 
   final int? hNum;
   final int? vNum;
@@ -27,7 +27,7 @@ class CustomGrid extends StatefulWidget {
     this.children,
     required this.page,
     required this.reOrderable,
-    this.atDispose, this.hNum, this.vNum, this.hGridStandard, this.vGridStandard, required this.isSquare,
+    this.atReorder, this.hNum, this.vNum, this.hGridStandard, this.vGridStandard, required this.isSquare,
   }): super(key:key);
 
   @override
@@ -136,6 +136,7 @@ class _CustomGridState extends State<CustomGrid> {
                           blankElement = null;
                           tempCoord = null;
                           tempPivots = null;
+                          reorder();
                         });
                       },
                       child: element,
@@ -164,12 +165,15 @@ class _CustomGridState extends State<CustomGrid> {
 
   @override
   void dispose() {
+    super.dispose();
+  }
+
+  void reorder() {
     List<int> reorderList = [];
     for(GridElement element in elements) {
-      reorderList.add(_elements.indexOf(element));
+      reorderList.add(widget.children!.indexOf(element));
     }
-    widget.atDispose!(reorderList);
-    super.dispose();
+    if(widget.atReorder != null) widget.atReorder!(reorderList);
   }
 
   double snapToGrid(double value, double gridSize){
@@ -269,6 +273,16 @@ class _CustomGridState extends State<CustomGrid> {
       });
     }
 
+    for(GridElement widgetElement in widget.children!) {
+      for(GridElement element in elements) {
+        if(widgetElement.key == element.key) {
+          elements[elements.indexOf(element)] = widgetElement;
+          _elements[_elements.indexOf(element)] = widgetElement;
+        }
+      }
+    }
+
+    /*
     for(GridElement element in _elements) {
       int index = elements.indexOf(element);
       int _index = _elements.indexOf(element);
@@ -279,6 +293,7 @@ class _CustomGridState extends State<CustomGrid> {
         });
       }
     }
+    */
   }
 }
 
@@ -287,9 +302,9 @@ class GridElement extends StatelessWidget {
   final String boxText;
   final int width;
   final bool isBlank;
-  final Widget? child;
+  Widget? child;
 
-  const GridElement({
+  GridElement({
     this.boxColor = Colors.transparent,
     this.boxText = "",
     this.width = 1,

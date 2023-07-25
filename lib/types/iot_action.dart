@@ -1,6 +1,8 @@
 import 'dart:async';
+import 'dart:convert';
 
 import 'package:flutter/cupertino.dart';
+import 'package:myiot/types/iot_condition.dart';
 
 import 'module.dart';
 
@@ -13,6 +15,48 @@ class IotAction {
   double delaySeconds = 0;
 
   IotAction(this.module,);
+  IotAction.fromJson(Map<String,dynamic> jsonData, ModuleList moduleList) {
+    isTimeDelay = jsonData["isTimeDelay"]??true;
+    if(isTimeDelay) {
+      delaySeconds = jsonData["delayTime"]??0;
+    }
+    else {
+      module = moduleList.findByID(jsonData["moduleId"]??"");
+      boolTarget = jsonData["valueBool"]??false;
+      doubleTarget = jsonData["valueDouble"]??0;
+    }
+  }
+  Map<String, dynamic> toJson() {
+    String jsonString;
+    if(isTimeDelay) {
+      jsonString = '''{
+        "isTimeDelay" : $isTimeDelay,
+        "delayTime" : $delaySeconds
+      }''';
+    }
+    else {
+      if(module == null) {
+        jsonString = '''{
+          "isTimeDelay" : $isTimeDelay
+        }''';
+      }
+      else if(module!.type == Module.ONOFF){
+        jsonString = '''{
+          "isTimeDelay" : $isTimeDelay,
+          "moduleId" : "${module!.moduleId}",
+          "valueBool" : $boolValue
+        }''';
+      }
+      else {
+        jsonString = '''{
+          "isTimeDelay" : $isTimeDelay,
+          "moduleId" : "${module!.moduleId}",
+          "valueDouble" : $doubleValue
+        }''';
+      }
+    }
+    return jsonDecode(jsonString);
+  }
 
   set doubleTarget(double val) => _targetVal = val;
   set boolTarget(bool val) => _targetBool = val;
@@ -40,7 +84,20 @@ class IotAction {
 
 class IotActionList {
   List<IotAction> actions = [];
+
   IotActionList(this.actions);
+  IotActionList.fromJson(List<Map<String,dynamic>> jsonList, ModuleList moduleList) {
+    for(Map<String,dynamic> jsonData in jsonList) {
+      actions.add(IotAction.fromJson(jsonData, moduleList));
+    }
+  }
+  List<Map<String,dynamic>> toJson() {
+    List<Map<String, dynamic>> jsonList = [];
+    for(IotAction action in actions) {
+      jsonList.add(action.toJson());
+    }
+    return jsonList;
+  }
 
   void doActions(ValueNotifier<int> moduleChangeListener) {
     double totalDelay = 0;

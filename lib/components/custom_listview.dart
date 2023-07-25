@@ -204,10 +204,9 @@ class _CustomListViewState extends State<CustomListView> {
                                     _elementAnimationController[savedIndex].animateTo(1,duration: Duration(milliseconds: animationDelayMilliseconds), curve:Curves.easeOut);
                                     Timer(Duration(milliseconds: animationDelayMilliseconds), () {
                                       setState((){
+                                        //print("remove in children");
                                         _children.remove(element);
-                                        if(widget.children.contains(element)) {
-                                          widget.onDelete(element.key!);
-                                        }
+                                        widget.onDelete(element.key!);
                                       });
                                     });
                                   }

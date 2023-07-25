@@ -7,6 +7,7 @@ import 'package:myiot/components/custom_grid.dart';
 import 'package:myiot/components/colors.dart';
 import 'package:myiot/components/custom_slider.dart';
 import 'package:flutter/material.dart';
+import 'package:myiot/types/iot_memories.dart';
 
 import '../types/module.dart';
 
@@ -76,8 +77,9 @@ class _ModulePageState extends State<ModulePage> {
                     isSquare: true,
                     page: widget.page,
                     reOrderable: widget.isEditable,
-                    atDispose: (reorderList){
+                    atReorder: (reorderList){
                       widget.moduleList.reOrder(reorderList);
+                      IotMemories.memoryUpdate();
                     },
                     children: renderModules()),
               ),
@@ -172,8 +174,9 @@ class _ModulePageState extends State<ModulePage> {
     );
   }
 
-  GridElement renderOnOffModule({String moduleName = "", String moduleId = "", bool onOff = false, void Function(bool)? onTap, required void Function() onEditModule}) {
+  GridElement renderOnOffModule({Key? key, String moduleName = "", String moduleId = "", bool onOff = false, void Function(bool)? onTap, required void Function() onEditModule}) {
     return renderModule(
+      key: key,
       onEditModule: onEditModule,
         width: 1,
         decoration: onOff? BoxDecoration(
@@ -263,10 +266,11 @@ class _ModulePageState extends State<ModulePage> {
     );
   }
 
-  GridElement renderSliderModule({String moduleName = "", String moduleId = "", String unit = "", double value = 0, double startVal = 0, double endVal = 100, bool decimal = false, void Function(double fraction)? onStartChange, void Function(double fraction)? onChange, void Function(double fraction)? onEndChange, required void Function() onEditModule}) {
+  GridElement renderSliderModule({Key? key, String moduleName = "", String moduleId = "", String unit = "", double value = 0, double startVal = 0, double endVal = 100, bool decimal = false, void Function(double fraction)? onStartChange, void Function(double fraction)? onChange, void Function(double fraction)? onEndChange, required void Function() onEditModule}) {
     Color handleColor = gradientPicker(color2, color1, (value - startVal)/(endVal - startVal),);
 
     return renderModule(
+      key: key,
       onEditModule: (){
         onEditModule();
       },
@@ -400,9 +404,10 @@ class _ModulePageState extends State<ModulePage> {
     );
   }
 
-  GridElement renderValueModule({String moduleName = "", String moduleId = "", String unit = "", double value = 0, double startVal = 0, double endVal = 100, bool decimal = false, required void Function() onEditModule}) {
+  GridElement renderValueModule({Key? key, String moduleName = "", String moduleId = "", String unit = "", double value = 0, double startVal = 0, double endVal = 100, bool decimal = false, required void Function() onEditModule}) {
     double nowFraction = (value - startVal) / (endVal - startVal);
     return renderModule(
+      key: key,
       onEditModule: (){
         onEditModule();
       },
@@ -529,7 +534,9 @@ class _ModulePageState extends State<ModulePage> {
   List<GridElement> renderModules() {
     return widget.moduleList.comp.map((module) {
       if(module.type == Module.ONOFF) {
-        return renderOnOffModule(moduleName: module.moduleName, moduleId: module.moduleId, onOff: module.value,
+        return renderOnOffModule(
+          key: ValueKey<String>(module.moduleId),
+            moduleName: module.moduleName, moduleId: module.moduleId, onOff: module.value,
             onEditModule: (){
               widget.onEditModule(module);
             },
@@ -541,7 +548,8 @@ class _ModulePageState extends State<ModulePage> {
             });
       }
       else if(module.type == Module.SLIDER) {
-        return renderSliderModule(moduleName: module.moduleName, moduleId: module.moduleId, value: module.value, unit: module.unit, startVal: module.startVal, endVal: module.endVal, decimal: module.decimal,
+        return renderSliderModule(
+          key: ValueKey<String>(module.moduleId),moduleName: module.moduleName, moduleId: module.moduleId, value: module.value, unit: module.unit, startVal: module.startVal, endVal: module.endVal, decimal: module.decimal,
           onEditModule: (){
             widget.onEditModule(module);
           },
@@ -558,7 +566,8 @@ class _ModulePageState extends State<ModulePage> {
           },);
       }
       else if(module.type == Module.VALUE) {
-        return renderValueModule(moduleName: module.moduleName, moduleId: module.moduleId, value: module.value, unit: module.unit, startVal: module.startVal, endVal: module.endVal, decimal: module.decimal,
+        return renderValueModule(
+          key: ValueKey<String>(module.moduleId),moduleName: module.moduleName, moduleId: module.moduleId, value: module.value, unit: module.unit, startVal: module.startVal, endVal: module.endVal, decimal: module.decimal,
           onEditModule: (){
             widget.onEditModule(module);
           },);

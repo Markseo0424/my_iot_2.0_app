@@ -6,6 +6,7 @@ import "package:myiot/components/constants.dart";
 import "package:myiot/components/colors.dart";
 import "package:flutter_svg/flutter_svg.dart";
 import "package:myiot/components/multi_hit_stack.dart";
+import "package:myiot/types/iot_memories.dart";
 
 import "../types/module.dart";
 
@@ -13,8 +14,9 @@ class SettingPage extends StatefulWidget {
   final PageController addPageController;
   final PageController addOverPageController;
   final double? page;
+  final IotMemories memories;
 
-  const SettingPage({Key?key, required this.addPageController, required this.addOverPageController, required this.page,}): super(key:key);
+  const SettingPage({Key?key, required this.addPageController, required this.addOverPageController, required this.page, required this.memories,}): super(key:key);
 
   @override
   State<SettingPage> createState() => _SettingPageState();
@@ -32,7 +34,7 @@ class _SettingPageState extends State<SettingPage> {
   @override
   void initState() {
     super.initState();
-    serverUrlController = TextEditingController(text: "http://000.00.00.00:0000");
+    serverUrlController = TextEditingController(text: widget.memories.serverUrl);
     serverUrlController.addListener(atEditText);
   }
 
@@ -163,9 +165,13 @@ class _SettingPageState extends State<SettingPage> {
                   ),
                   GestureDetector(
                     onTap: (){
-                      setState(() {
-                        changeAvailable = true;
-                      });
+                      if(true) {
+                        setState(() {
+                          final snackBar = SnackBar(content: Text("Server URL is available."),);
+                          ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                          changeAvailable = true;
+                        });
+                      }
                     },
                     child: Container(height: 60, decoration: BoxDecoration(
                       gradient: LinearGradient(
@@ -209,8 +215,16 @@ class _SettingPageState extends State<SettingPage> {
                     ),
                   ),
                   GestureDetector(
-                    onTap: (){
-                    },
+                    onTap: changeAvailable? (){
+                      setState(() {
+                        widget.memories.serverUrl = serverUrlController.text;
+                        IotMemories.memoryUpdate();
+                        final snackBar = SnackBar(content: Text("Server URL is successfully changed."),);
+                        ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                        widget.addPageController.animateToPage(1, duration: Duration(milliseconds: animationDelayMilliseconds), curve: Curves.easeOut);
+                        Timer(Duration(milliseconds: 50), () => widget.addOverPageController.animateToPage(1, duration: Duration(milliseconds: animationDelayMilliseconds), curve: Curves.easeOut));
+                      });
+                    } : null,
                     child: AnimatedContainer(duration: Duration(milliseconds: animationDelayMilliseconds), curve: Curves.easeOut, height: 60, decoration: BoxDecoration(
                         gradient: LinearGradient(
                           colors: [Color(changeAvailable? color2 : fadeOut).withOpacity(0.5), Color(changeAvailable? color1 : fadeOut).withOpacity(0.5)],

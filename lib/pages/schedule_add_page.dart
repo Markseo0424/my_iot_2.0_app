@@ -16,6 +16,7 @@ import "package:myiot/types/iot_action.dart";
 import "../components/custom_listview.dart";
 import "../components/multi_hit_stack.dart";
 import "../types/iot_condition.dart";
+import "../types/iot_memories.dart";
 import "../types/module.dart";
 import "../types/schedule.dart";
 
@@ -356,11 +357,12 @@ class _ScheduleAddPageState extends State<ScheduleAddPage> with TickerProviderSt
                         snackBarText = "Same name! Try again.";
                       }
                       else {
-                        widget.schedule.scheduleName = newName;
                         if (widget.isScheduleNew &&
                             conditionList.conditions.isNotEmpty &&
                             actionList.actions.isNotEmpty) {
+                          widget.schedule.scheduleName = newName;
                           widget.scheduleList.scheduleList.add(widget.schedule);
+                          IotMemories.memoryUpdate();
                           widget.addOverPageController.animateToPage(1,
                               duration: Duration(
                                   milliseconds: animationDelayMilliseconds),
@@ -376,6 +378,8 @@ class _ScheduleAddPageState extends State<ScheduleAddPage> with TickerProviderSt
                         else if (!widget.isScheduleNew &&
                             conditionList.conditions.isNotEmpty &&
                             actionList.actions.isNotEmpty) {
+                          widget.schedule.scheduleName = newName;
+                          IotMemories.memoryUpdate();
                           widget.addOverPageController.animateToPage(1,
                               duration: Duration(
                                   milliseconds: animationDelayMilliseconds),
@@ -440,6 +444,7 @@ class _ScheduleAddPageState extends State<ScheduleAddPage> with TickerProviderSt
                   GestureDetector(
                     onTap: () {
                       widget.scheduleList.scheduleList.remove(widget.schedule);
+                      IotMemories.memoryUpdate();
                       widget.addOverPageController.animateToPage(1, duration: Duration(milliseconds: animationDelayMilliseconds), curve: Curves.easeOut);
                       Timer(Duration(milliseconds: 50), () {widget.addPageController.animateToPage(1, duration: Duration(milliseconds: animationDelayMilliseconds), curve: Curves.easeOut);});
                     },
@@ -617,7 +622,6 @@ class _ScheduleAddPageState extends State<ScheduleAddPage> with TickerProviderSt
                     },
                   ),
                 ),
-
                 ),
               ],
             ),

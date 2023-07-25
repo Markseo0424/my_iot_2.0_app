@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:math';
 
 import 'package:format/format.dart';
@@ -11,6 +12,67 @@ class IotCondition {
   bool isTimeCondition = false;
 
   IotCondition(this._module);
+  IotCondition.fromJson(Map<String, dynamic> jsonData, ModuleList moduleList) {
+    isTimeCondition = jsonData["isTimeCondition"]??false;
+    and = jsonData["and"]??0;
+    if(isTimeCondition) {
+      timeRange = jsonData["time"]["timeRange"]??[0,0,24,0];
+      weekDays = jsonData["time"]["days"]??[false,false,false,false,false,false,false];
+    }
+    else {
+      _module = moduleList.findByID(jsonData["module"]["moduleId"]??"");
+      if(_module == null) return;
+      if(_module!.type == Module.ONOFF) {
+        _targetValue = jsonData["module"]["targetBool"]??false;
+      }
+      else {
+        _boundValue = jsonData["module"]["targetRange"]??<double>[0,100];
+      }
+    }
+  }
+  Map<String, dynamic> toJson() {
+    String jsonString;
+    if(isTimeCondition) {
+      jsonString = '''{
+        "isTimeCondition" : $isTimeCondition,
+        "and" : $and,
+        "time" : {
+          "timeRange" : $timeRange,
+          "days" : $weekDays
+         }
+      }''';
+    }
+    else {
+      if(_module == null) {
+        jsonString = '''{
+        "isTimeCondition" : $isTimeCondition,
+        "and" : $and
+      }''';
+      }
+      else if(_module!.type == Module.ONOFF) {
+        jsonString = '''{
+          "isTimeCondition" : $isTimeCondition,
+          "and" : $and,
+          "module" : {
+            "moduleId" : "${_module!.moduleId}",
+            "targetBool" : $_targetValue
+          }
+        }''';
+      }
+      else {
+        jsonString = '''{
+          "isTimeCondition" : $isTimeCondition,
+          "and" : $and,
+          "module" : {
+            "moduleId" : "${_module!.moduleId}",
+            "targetRange" : $_boundValue
+          }
+        }''';
+      }
+    }
+    return jsonDecode(jsonString);
+  }
+
 
   List<int> timeRange = [0,0,24,0];
   List<bool> weekDays = [false,false,false,false,false,false,false]; //mon tue wed ...
@@ -92,6 +154,18 @@ class IotConditionList {
 
   get isOnce => _once;
   IotConditionList(this.conditions);
+  IotConditionList.fromJson(List<Map<String,dynamic>> jsonList, ModuleList moduleList) {
+    for(Map<String,dynamic> jsonData in jsonList) {
+      conditions.add(IotCondition.fromJson(jsonData, moduleList));
+    }
+  }
+  List<Map<String,dynamic>> toJson() {
+    List<Map<String, dynamic>> jsonList = [];
+    for(IotCondition condition in conditions) {
+      jsonList.add(condition.toJson());
+    }
+    return jsonList;
+  }
 
   bool evaluate() {
     bool previousAnd = false;
