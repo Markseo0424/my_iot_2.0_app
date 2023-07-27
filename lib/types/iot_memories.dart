@@ -73,16 +73,16 @@ class IotMemories {
     atFinishLoad();
     return true;
   }
-
+/*
   void printDebugMessage() {
-    //print("=====memoryListener called.=====");
-    //print("=====serverURL=====");
-    //print(serverUrl);
-    //print("=====modules=====");
-    //print(jsonEncode(moduleList.toJson()));
-    //print("=====schedules=====");
-    //print(jsonEncode(scheduleList.toJson()));
-    //print("--------------------------------");
+    print("=====memoryListener called.=====");
+    print("=====serverURL=====");
+    print(serverUrl);
+    print("=====modules=====");
+    print(jsonEncode(moduleList.toJson()));
+    print("=====schedules=====");
+    print(jsonEncode(scheduleList.toJson()));
+    print("--------------------------------");
   }
-
+*/
 }

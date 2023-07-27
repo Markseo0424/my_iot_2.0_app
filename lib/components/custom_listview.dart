@@ -1,3 +1,5 @@
+// ignore_for_file: must_be_immutable
+
 import 'dart:async';
 import 'dart:math';
 import 'package:flutter/material.dart';
@@ -201,8 +203,8 @@ class _CustomListViewState extends State<CustomListView> {
                                 },
                                 onHorizontalDragEnd: (info) {
                                   if(dx < -100) {
-                                    _elementAnimationController[savedIndex].animateTo(1,duration: Duration(milliseconds: animationDelayMilliseconds), curve:Curves.easeOut);
-                                    Timer(Duration(milliseconds: animationDelayMilliseconds), () {
+                                    _elementAnimationController[savedIndex].animateTo(1,duration: const Duration(milliseconds: animationDelayMilliseconds), curve:Curves.easeOut);
+                                    Timer(const Duration(milliseconds: animationDelayMilliseconds), () {
                                       setState((){
                                         //print("remove in children");
                                         _children.remove(element);

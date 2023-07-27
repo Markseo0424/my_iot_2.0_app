@@ -1,8 +1,9 @@
+// ignore_for_file: deprecated_member_use, depend_on_referenced_packages
+
 import 'dart:async';
 import 'dart:math';
 import 'dart:ui';
 
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_background_service/flutter_background_service.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
@@ -20,7 +21,6 @@ import 'package:myiot/types/iot_action.dart';
 import 'package:myiot/types/iot_condition.dart';
 import 'package:myiot/types/iot_memories.dart';
 import 'package:myiot/types/iot_request.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 import '../pages/schedule_add_page.dart';
 import '../pages/schedule_page.dart';
@@ -28,7 +28,7 @@ import '../types/module.dart';
 import '../types/schedule.dart';
 
 class HomeScreen extends StatefulWidget {
-  HomeScreen({Key? key}) : super(key: key);
+  const HomeScreen({Key? key}) : super(key: key);
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();
@@ -78,13 +78,13 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin{
         inAppService.initializeBackgroundService(
           modules: moduleList,
           schedules: scheduleList,
-          memories: memories,
+          //memories: memories,
           listener: moduleChangeListener,
         );
         Timer.periodic(const Duration(seconds: 10), (timer) async {
           inAppService.synchronize();
           //print('inapp service alive!');/*
-          SharedPreferences? preferences = await SharedPreferences.getInstance();
+          //SharedPreferences? preferences = await SharedPreferences.getInstance();
           //print(preferences.getString("savedData"));*/
         });
 
@@ -115,8 +115,9 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin{
     setState(() {
       addPage = addPageController.page;
       if((addPage??0) != 1) {
-        if(pageController.hasClients)
+        if(pageController.hasClients) {
           pageController.jumpToPage(memorizePage);
+        }
         moduleEditable = false;
         scheduleEditable = false;
       }
@@ -124,7 +125,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin{
   }
 
   memoryUpdateListener() {
-    memories.printDebugMessage();
+    //memories.printDebugMessage();
     memories.saveToPref();
   }
 
@@ -152,7 +153,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin{
             children: [
               PageView(
                 controller: addPageController,
-                physics: NeverScrollableScrollPhysics(),
+                physics: const NeverScrollableScrollPhysics(),
                 scrollDirection: Axis.vertical,
                 children: [
                   Stack(
@@ -269,14 +270,14 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin{
                                 //print("edit mdule");
                                 paramModule = module;
                                 isModuleNew = false;
-                                addPageController.animateToPage(2, duration: Duration(milliseconds: animationDelayMilliseconds), curve: Curves.easeOut);
-                                Timer(Duration(milliseconds: 50), () {addPageOverController.animateToPage(2, duration: Duration(milliseconds: animationDelayMilliseconds), curve: Curves.easeOut);});
+                                addPageController.animateToPage(2, duration: const Duration(milliseconds: animationDelayMilliseconds), curve: Curves.easeOut);
+                                Timer(const Duration(milliseconds: 50), () {addPageOverController.animateToPage(2, duration: const Duration(milliseconds: animationDelayMilliseconds), curve: Curves.easeOut);});
                               }),
                               SchedulePage(page: -1 + (page??0),isEditable: scheduleEditable, scheduleList: scheduleList, moduleChangeListener: moduleChangeListener,onEditSchedule: (schedule) {
                                 paramSchedule = schedule;
                                 isScheduleNew = false;
-                                addPageController.animateToPage(2, duration: Duration(milliseconds: animationDelayMilliseconds), curve: Curves.easeOut);
-                                Timer(Duration(milliseconds: 50), () {addPageOverController.animateToPage(2, duration: Duration(milliseconds: animationDelayMilliseconds), curve: Curves.easeOut);});
+                                addPageController.animateToPage(2, duration: const Duration(milliseconds: animationDelayMilliseconds), curve: Curves.easeOut);
+                                Timer(const Duration(milliseconds: 50), () {addPageOverController.animateToPage(2, duration: const Duration(milliseconds: animationDelayMilliseconds), curve: Curves.easeOut);});
                               },),
                             ],
                           ),),
@@ -309,23 +310,23 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin{
                                 scheduleList.evaluateSchedules(moduleChangeListener);
                               }
                               else {
-                                addPageController.animateToPage(0,duration: Duration(milliseconds: animationDelayMilliseconds), curve: Curves.easeOut);
-                                Timer(Duration(milliseconds: 50), () => addPageOverController.animateToPage(0,duration: Duration(milliseconds: animationDelayMilliseconds), curve: Curves.easeOut));
+                                addPageController.animateToPage(0,duration: const Duration(milliseconds: animationDelayMilliseconds), curve: Curves.easeOut);
+                                Timer(const Duration(milliseconds: 50), () => addPageOverController.animateToPage(0,duration: const Duration(milliseconds: animationDelayMilliseconds), curve: Curves.easeOut));
                               }
                             },
                             itemBuilder: (BuildContext context) => <PopupMenuEntry<int>> [
                               PopupMenuItem<int>(
                                 value: 0,
-                                child: Text('${moduleEditable || scheduleEditable? "save" : "edit"} ${(page??0)==0? "MODULES": "SCHEDULES"}', style: pretendard(FontWeight.w700, 16, Color(black)),),
+                                child: Text('${moduleEditable || scheduleEditable? "save" : "edit"} ${(page??0)==0? "MODULES": "SCHEDULES"}', style: pretendard(FontWeight.w700, 16, const Color(black)),),
                               ),
                               PopupMenuItem<int>(
                                 value: 1,
-                                child: Text('settings', style: pretendard(FontWeight.w700, 16, Color(black))),
+                                child: Text('settings', style: pretendard(FontWeight.w700, 16, const Color(black))),
                               ),
                               if((page??0) == 1)
                                 PopupMenuItem<int>(
                                   value: 2,
-                                  child: Text('evaluate schedules', style: pretendard(FontWeight.w700, 16, Color(black))),
+                                  child: Text('evaluate schedules', style: pretendard(FontWeight.w700, 16, const Color(black))),
                                 ),
                             ],
                           ),
@@ -333,7 +334,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin{
                       ),
                     ],
                   ),
-                  Container(color: Color(white),),
+                  Container(color: const Color(white),),
                 ],
               ),
               Positioned(
@@ -360,8 +361,8 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin{
                                   IotActionList([]));
                               isScheduleNew = true;
                             }
-                            addPageController.animateTo(MediaQuery.of(context).size.height*2, duration: Duration(milliseconds: animationDelayMilliseconds), curve: Curves.easeOut);
-                            Timer(Duration(milliseconds: 50), () {addPageOverController.animateTo(MediaQuery.of(context).size.height*2, duration: Duration(milliseconds: animationDelayMilliseconds), curve: Curves.easeOut);});
+                            addPageController.animateTo(MediaQuery.of(context).size.height*2, duration: const Duration(milliseconds: animationDelayMilliseconds), curve: Curves.easeOut);
+                            Timer(const Duration(milliseconds: 50), () {addPageOverController.animateTo(MediaQuery.of(context).size.height*2, duration: const Duration(milliseconds: animationDelayMilliseconds), curve: Curves.easeOut);});
                           },
                           child: Container(
                             width: appbarRadius*2,
@@ -380,7 +381,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin{
                                   BoxShadow(
                                     color: Colors.black.withOpacity(0.1),
                                     blurRadius: 20,
-                                    offset: Offset(0,0),
+                                    offset: const Offset(0,0),
                                   ),
                                 ],
                               ),
@@ -397,8 +398,8 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin{
                                           IotActionList([]));
                                       isScheduleNew = true;
                                     }
-                                    addPageController.animateToPage(2, duration:Duration(milliseconds: animationDelayMilliseconds), curve: Curves.easeOut);
-                                    Timer(Duration(milliseconds: 50), () {addPageOverController.animateToPage(2, duration: Duration(milliseconds: animationDelayMilliseconds), curve: Curves.easeOut);});
+                                    addPageController.animateToPage(2, duration:const Duration(milliseconds: animationDelayMilliseconds), curve: Curves.easeOut);
+                                    Timer(const Duration(milliseconds: 50), () {addPageOverController.animateToPage(2, duration: const Duration(milliseconds: animationDelayMilliseconds), curve: Curves.easeOut);});
                                   },
                                   icon: SvgPicture.asset("asset/icon/add.svg",
                                     color: const Color(white),),
@@ -413,7 +414,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin{
               ),
               PageView(
                 controller: addPageOverController,
-                physics: NeverScrollableScrollPhysics(),
+                physics: const NeverScrollableScrollPhysics(),
                 scrollDirection: Axis.vertical,
                 children: [
                   SettingPage(addPageController: addPageController, addOverPageController: addPageOverController, page: page, memories: memories),
@@ -474,7 +475,7 @@ Future<void> initializeService() async {
 Future<void> onStart(ServiceInstance service) async {
   DartPluginRegistrant.ensureInitialized();
 
-  final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
+  //final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
   IotBackgroundService backgroundService = IotBackgroundService();
   IotMemories backgroundMemories = IotMemories();
 

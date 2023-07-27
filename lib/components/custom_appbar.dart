@@ -1,3 +1,5 @@
+// ignore_for_file: deprecated_member_use, depend_on_referenced_packages
+
 import "dart:math";
 
 import "package:flutter/material.dart";
@@ -15,6 +17,7 @@ class CustomAppBar extends StatefulWidget {
 
   const CustomAppBar({Key?key, required this.height, required this.radius, required this.isHorizontal, required this.page, required this.controller}): super(key:key);
 
+  @override
   State<CustomAppBar> createState() => _CustomAppBarState();
 }
 
@@ -28,20 +31,20 @@ class _CustomAppBarState extends State<CustomAppBar> {
             shadow: BoxShadow(
               color: Colors.black.withOpacity(0.1),
               blurRadius: 20,
-              offset: Offset(0,0),
+              offset: const Offset(0,0),
             ),
             clipper: AppbarClipper(radius: widget.radius + 5),
             child:
             Container(
               height: widget.height,
               decoration: BoxDecoration(
-                color: Color(white),
-                borderRadius: BorderRadius.vertical(top: Radius.circular(15)),
+                color: const Color(white),
+                borderRadius: const BorderRadius.vertical(top: Radius.circular(15)),
                 boxShadow: [
                   BoxShadow(
                     color: Colors.black.withOpacity(0.1),
                     blurRadius: 20,
-                    offset: Offset(0,0),
+                    offset: const Offset(0,0),
                   )
                 ],
               ),
@@ -50,20 +53,20 @@ class _CustomAppBarState extends State<CustomAppBar> {
           Row(
             children: [
               Expanded(
-                child: Padding(padding: EdgeInsets.only(top: 5), child:
+                child: Padding(padding: const EdgeInsets.only(top: 5), child:
                 Column(mainAxisAlignment: MainAxisAlignment.center, crossAxisAlignment: CrossAxisAlignment.center, children:
                 [
                   IconButton(
                     onPressed: () {
                       moveToPage(0);
                     },
-                    icon: SvgPicture.asset("asset/icon/dashboard.svg", color: Color(fadeOut)),
+                    icon: SvgPicture.asset("asset/icon/dashboard.svg", color: const Color(fadeOut)),
                     iconSize: widget.height*0.4,
                   ),
                   Text(
                     "Modules",
                     style: TextStyle(
-                      color: Color(fadeOut),
+                      color: const Color(fadeOut),
                       height: 0.6,
                       fontSize: widget.height/5,
                       fontFamily: "pretendard",
@@ -74,20 +77,20 @@ class _CustomAppBarState extends State<CustomAppBar> {
               ),
               Container(width: widget.radius*2,),
               Expanded(
-                  child: Padding(padding: EdgeInsets.only(top: 5), child:
+                  child: Padding(padding: const EdgeInsets.only(top: 5), child:
                   Column(mainAxisAlignment: MainAxisAlignment.center, crossAxisAlignment: CrossAxisAlignment.center, children:
                   [
                     IconButton(
                       onPressed: () {
                         moveToPage(1);
                       },
-                      icon: SvgPicture.asset("asset/icon/event.svg", color: Color(fadeOut)),
+                      icon: SvgPicture.asset("asset/icon/event.svg", color: const Color(fadeOut)),
                       iconSize: widget.height*0.4,
                     ),
                     Text(
                       "Schedules",
                       style: TextStyle(
-                        color: Color(fadeOut),
+                        color: const Color(fadeOut),
                         height: 0.6,
                         fontSize: widget.height/5,
                         fontFamily: "pretendard",
@@ -110,20 +113,20 @@ class _CustomAppBarState extends State<CustomAppBar> {
                     ClipPath(
                       clipper: AppbarButtonClipper(page: widget.page),
                       child:
-                      Padding(padding: EdgeInsets.only(top: 5), child:
+                      Padding(padding: const EdgeInsets.only(top: 5), child:
                       Column(mainAxisAlignment: MainAxisAlignment.center, crossAxisAlignment: CrossAxisAlignment.center, children:
                       [
                         IconButton(
                           onPressed: () {
                             moveToPage(0);
                           },
-                          icon: SvgPicture.asset("asset/icon/dashboard.svg", color: Color(black)),
+                          icon: SvgPicture.asset("asset/icon/dashboard.svg", color: const Color(black)),
                           iconSize: widget.height*0.4,
                         ),
                         Text(
                           "Modules",
                           style: TextStyle(
-                            color: Color(black),
+                            color: const Color(black),
                             height: 0.6,
                             fontSize: widget.height/5,
                             fontFamily: "pretendard",
@@ -145,20 +148,20 @@ class _CustomAppBarState extends State<CustomAppBar> {
                     ClipPath(
                       clipper: AppbarButtonClipper(page: -1 + widget.page),
                       child:
-                      Padding(padding: EdgeInsets.only(top: 5), child:
+                      Padding(padding: const EdgeInsets.only(top: 5), child:
                       Column(mainAxisAlignment: MainAxisAlignment.center, crossAxisAlignment: CrossAxisAlignment.center, children:
                       [
                         IconButton(
                           onPressed: () {
                             moveToPage(1);
                           },
-                          icon: SvgPicture.asset("asset/icon/event.svg", color: Color(black)),
+                          icon: SvgPicture.asset("asset/icon/event.svg", color: const Color(black)),
                           iconSize: widget.height*0.4,
                         ),
                         Text(
                           "Schedules",
                           style: TextStyle(
-                            color: Color(black),
+                            color: const Color(black),
                             height: 0.6,
                             fontSize: widget.height/5,
                             fontFamily: "pretendard",
@@ -178,13 +181,13 @@ class _CustomAppBarState extends State<CustomAppBar> {
       return Container(
         width: widget.height*2,
         decoration: BoxDecoration(
-            color: Color(white),
-            borderRadius: BorderRadius.horizontal(right: Radius.circular(15)),
+            color: const Color(white),
+            borderRadius: const BorderRadius.horizontal(right: Radius.circular(15)),
             boxShadow: [
               BoxShadow(
                 color: Colors.black.withOpacity(0.1),
                 blurRadius: 20,
-                offset: Offset(0,0),
+                offset: const Offset(0,0),
               )
             ]
         ),

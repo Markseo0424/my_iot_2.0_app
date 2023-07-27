@@ -19,7 +19,7 @@ class ClipShadowPath extends StatelessWidget {
         clipper: clipper,
         shadow: shadow,
       ),
-      child: ClipPath(child: child, clipper: clipper),
+      child: ClipPath(clipper: clipper, child: child),
     );
   }
 }

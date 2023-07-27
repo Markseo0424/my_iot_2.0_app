@@ -21,7 +21,7 @@ class IotRequest {
         ..write(content);
 
       var httpResponse = await httpRequest.close().timeout(
-          Duration(seconds: 5));
+          const Duration(seconds: 5));
 
       var httpResponseContent = await utf8.decoder.bind(httpResponse).join();
       Map<String, dynamic> receivedJson = jsonDecode(httpResponseContent);

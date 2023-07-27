@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:math';
 
 import 'package:format/format.dart';
 
@@ -100,7 +99,7 @@ class IotCondition {
     if(isTimeCondition) {
       //print("time condition");
       DateTime nowTime = DateTime.now();
-      if(!ListCompare(weekDays, [false,false,false,false,false,false,false]) && !weekDays[nowTime.weekday]) return false;
+      if(!listCompare(weekDays, [false,false,false,false,false,false,false]) && !weekDays[nowTime.weekday]) return false;
       if(timeRange[0] > timeRange[2]) return false;
       if(timeRange[0] == timeRange[2] && timeRange[1] > timeRange[3]) return false;
       if(nowTime.hour > timeRange[0] && nowTime.hour < timeRange[2]) return true;
@@ -112,23 +111,24 @@ class IotCondition {
     if(_module!.type == Module.ONOFF) {
       return _module!.value == _targetValue;
     }
-    if(!_module!.decimal)
-      return (_module!.doubleVal.round() <= _boundValue![1].round() && _module!.doubleVal.round() >= _boundValue![0].round());
-    else
-      return (_module!.value <= _boundValue![1] && _module!.value >= _boundValue![0]);
+    if(!_module!.decimal) {
+      return (_module!.doubleVal.round() <= _boundValue[1].round() && _module!.doubleVal.round() >= _boundValue[0].round());
+    } else {
+      return (_module!.value <= _boundValue[1] && _module!.value >= _boundValue[0]);
+    }
   }
 
   String weekDayString() {
-    if(ListCompare<bool>(weekDays, [false,false,false,false,false,false,false])) {
+    if(listCompare<bool>(weekDays, [false,false,false,false,false,false,false])) {
       return "once";
     }
-    else if(ListCompare<bool>(weekDays, [false,false,false,false,false,true,true])) {
+    else if(listCompare<bool>(weekDays, [false,false,false,false,false,true,true])) {
       return "weekends";
     }
-    else if(ListCompare<bool>(weekDays, [true,true,true,true,true,false,false])) {
+    else if(listCompare<bool>(weekDays, [true,true,true,true,true,false,false])) {
       return "weekdays";
     }
-    else if(ListCompare<bool>(weekDays, [true,true,true,true,true,true,true])) {
+    else if(listCompare<bool>(weekDays, [true,true,true,true,true,true,true])) {
       return "everyday";
     }
     else {
@@ -138,7 +138,7 @@ class IotCondition {
     }
   }
 
-  bool ListCompare<T>(List<T> firstList, List<T> secondList) {
+  bool listCompare<T>(List<T> firstList, List<T> secondList) {
     bool result = true;
     for(int i = 0; i < firstList.length; i++) {
       if(firstList[i] != secondList[i]) result = false;
@@ -183,24 +183,29 @@ class IotConditionList {
         if(conditionAnd == false && conditionEvaluation == true) {
           evaluation = true;
           break;
-        } else if(conditionAnd == false && conditionEvaluation == false) null;
-        else if(conditionAnd == true && conditionEvaluation == true) evaluation |= true;
-        else if(conditionAnd == true && conditionEvaluation == false) {
+        } else if(conditionAnd == false && conditionEvaluation == false) {
+          null;
+        } else if(conditionAnd == true && conditionEvaluation == true) {
+          evaluation |= true;
+        } else if(conditionAnd == true && conditionEvaluation == false) {
           evaluation = false;
           skip = true;
         }
       }
       else {
         if(conditionAnd == false && conditionEvaluation == true) {
-          if(skip) skip = false;
-          else {
+          if(skip) {
+            skip = false;
+          } else {
             evaluation = true;
             break;
           }
         }
-        else if(conditionAnd == false && conditionEvaluation == false) evaluation = false;
-        else if(conditionAnd == true && conditionEvaluation == true && !skip) evaluation |= true;
-        else if(conditionAnd == true && conditionEvaluation == false && !skip) {
+        else if(conditionAnd == false && conditionEvaluation == false) {
+          evaluation = false;
+        } else if(conditionAnd == true && conditionEvaluation == true && !skip) {
+          evaluation |= true;
+        } else if(conditionAnd == true && conditionEvaluation == false && !skip) {
           evaluation = false;
           skip = true;
         }
@@ -220,18 +225,21 @@ class IotConditionList {
   }
 
   String? getDescription() {
-    if(conditions.isEmpty) return null;
-    else {
+    if(conditions.isEmpty) {
+      return null;
+    } else {
       Module? module = conditions[0].module;
       String str = "";
       if(conditions[0].isTimeCondition) {
         str = "when time is {:02d}:{:02d} to {:02d}:{:02d}".format(conditions[0].timeRange[0], conditions[0].timeRange[1], conditions[0].timeRange[2], conditions[0].timeRange[3]);
       }
-      else if(module == null) return null;
-      else if(module.type == Module.ONOFF)
+      else if(module == null) {
+        return null;
+      } else if(module.type == Module.ONOFF) {
         str = "when ${module.moduleName} is ${conditions[0].target? "ON" : "OFF"}";
-      else
-        str =  "when ${module.moduleName} is ${module!.decimal? conditions[0].minVal.toStringAsFixed(1): conditions[0].minVal.round()}${module!.unit} to ${module!.decimal? conditions[0].maxVal.toStringAsFixed(1): conditions[0].maxVal.round()}${module!.unit}";
+      } else {
+        str =  "when ${module.moduleName} is ${module.decimal? conditions[0].minVal.toStringAsFixed(1): conditions[0].minVal.round()}${module.unit} to ${module.decimal? conditions[0].maxVal.toStringAsFixed(1): conditions[0].maxVal.round()}${module.unit}";
+      }
       if(conditions.length > 1) str += "...";
       return str;
     }

@@ -1,3 +1,5 @@
+// ignore_for_file: depend_on_referenced_packages, deprecated_member_use
+
 import 'dart:math';
 import 'dart:ui';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -207,7 +209,9 @@ class _ModulePageState extends State<ModulePage> {
                     onPressed: () {
                       //print("click $moduleName");
                       if(!widget.isEditable) {if(onTap != null) onTap(onOff);}
-                      else onEditModule();
+                      else {
+                        onEditModule();
+                      }
                     },
                     icon: SvgPicture.asset(
                       'asset/icon/power.svg',
@@ -224,7 +228,9 @@ class _ModulePageState extends State<ModulePage> {
                     onPressed: () {
                       //print("click $moduleName");
                       if(!widget.isEditable) {if(onTap != null) onTap(onOff);}
-                      else onEditModule();
+                      else {
+                        onEditModule();
+                      }
                     },
                     icon: SvgPicture.asset(
                       'asset/icon/power.svg',
@@ -285,45 +291,45 @@ class _ModulePageState extends State<ModulePage> {
                 children:[
                   Expanded(child:
                   Padding(
-                    padding: EdgeInsets.only(left: 15),
+                    padding: const EdgeInsets.only(left: 15),
                     child: Align(
                       alignment: Alignment.bottomCenter,
                       child: Text("${decimal? value.toStringAsFixed(1): value.round()}$unit",
-                        style: TextStyle(
+                        style: const TextStyle(
                           fontFamily: "pretendard",
                           fontWeight: FontWeight.w500,
                           fontSize: 60,
                           height: 0.8,
-                          color: const Color(black),
+                          color: Color(black),
                         ),
                       ),
                     ),
                   )
                   ),
                   Expanded(child: Padding(
-                    padding: EdgeInsets.only(left:15),
+                    padding: const EdgeInsets.only(left:15),
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.end,
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
                           moduleName,
-                          style: TextStyle(
+                          style: const TextStyle(
                             fontFamily: "pretendard",
                             fontWeight: FontWeight.w700,
                             fontSize: 30,
                             height: 0.9,
-                            color: const Color(black),
+                            color: Color(black),
                           ),
                         ),
                         Text(
                           "id : $moduleId",
-                          style: TextStyle(
+                          style: const TextStyle(
                               fontFamily: "pretendard",
                               fontWeight: FontWeight.w400,
                               fontSize: 15,
                               height: 2,
-                              color: const Color(subBlack)
+                              color: Color(subBlack)
                           ),
                         ),
                       ],
@@ -484,12 +490,12 @@ class _ModulePageState extends State<ModulePage> {
                   child: Align(
                     alignment: Alignment.bottomCenter,
                     child: Text("${decimal? value.toStringAsFixed(1): value.round()}$unit",
-                      style: TextStyle(
+                      style: const TextStyle(
                         fontFamily: "pretendard",
                         fontWeight: FontWeight.w500,
                         fontSize: 35,
                         height: 0.8,
-                        color: const Color(black),
+                        color: Color(black),
                       ),
                     ),
                   ),

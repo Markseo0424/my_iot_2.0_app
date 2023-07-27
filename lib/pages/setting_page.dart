@@ -1,5 +1,6 @@
+// ignore_for_file: depend_on_referenced_packages, deprecated_member_use
+
 import "dart:async";
-import "dart:convert";
 import "dart:ui";
 
 import "package:flutter/material.dart";
@@ -10,7 +11,6 @@ import "package:myiot/components/multi_hit_stack.dart";
 import "package:myiot/types/iot_memories.dart";
 import "package:myiot/types/iot_request.dart";
 
-import "../types/module.dart";
 
 class SettingPage extends StatefulWidget {
   final PageController addPageController;
@@ -62,7 +62,7 @@ class _SettingPageState extends State<SettingPage> {
     return MultiHitStack(
       children: [
         Padding(
-          padding: EdgeInsets.only(
+          padding: const EdgeInsets.only(
             top: 30,
             left: 15,
             right: 15,
@@ -72,23 +72,23 @@ class _SettingPageState extends State<SettingPage> {
               children: [
                 Align(alignment: Alignment.topLeft, child: IconButton(
                   onPressed: () {
-                    widget.addOverPageController.animateToPage(1, duration: Duration(milliseconds: animationDelayMilliseconds), curve: Curves.easeOut);
-                    Timer(Duration(milliseconds: 50), (){widget.addPageController.animateToPage(1, duration: Duration(milliseconds: animationDelayMilliseconds), curve: Curves.easeOut);});
+                    widget.addOverPageController.animateToPage(1, duration: const Duration(milliseconds: animationDelayMilliseconds), curve: Curves.easeOut);
+                    Timer(const Duration(milliseconds: 50), (){widget.addPageController.animateToPage(1, duration: const Duration(milliseconds: animationDelayMilliseconds), curve: Curves.easeOut);});
                   },
                   icon: SvgPicture.asset(
                     "asset/icon/back.svg",
-                    color: Color(white),
+                    color: const Color(white),
                   )
                     ,iconSize: 30,
                 ),),
-                Container(height: 105, child: Align(alignment: Alignment.bottomCenter, child: Text("SETTINGS", style: TextStyle(
+                const SizedBox(height: 105, child: Align(alignment: Alignment.bottomCenter, child: Text("SETTINGS", style: TextStyle(
                   color: Color(white),
                   fontFamily: "pretendard",
                   fontWeight: FontWeight.w700,
                   fontSize:40,
                   height: 36/40,
                 ),),),),
-                Container(height: 55, child: Align(alignment: Alignment.bottomLeft, child: Padding(padding: EdgeInsets.only(left:5, bottom:5), child: Text("Server URL", style: TextStyle(
+                const SizedBox(height: 55, child: Align(alignment: Alignment.bottomLeft, child: Padding(padding: EdgeInsets.only(left:5, bottom:5), child: Text("Server URL", style: TextStyle(
                   color: Color(white),
                   fontFamily: "pretendard",
                   fontWeight: FontWeight.w700,
@@ -108,7 +108,7 @@ class _SettingPageState extends State<SettingPage> {
                       ],
                     ),
                   ),
-                  Container(
+                  SizedBox(
                     height: 60,
                     child: ClipRRect(
                       borderRadius: const BorderRadius.all(Radius.circular(15)),
@@ -120,12 +120,12 @@ class _SettingPageState extends State<SettingPage> {
                   ),
                   Container(height: 60, decoration: BoxDecoration(
                       gradient: LinearGradient(
-                        colors: [Color(white).withOpacity(0.15), Color(white).withOpacity(0.05)],
+                        colors: [const Color(white).withOpacity(0.15), const Color(white).withOpacity(0.05)],
                         begin: Alignment.topLeft, end: Alignment.bottomRight,
                       ),
                       borderRadius: BorderRadius.circular(15),
                       border: Border.all(
-                        color: Color(white).withOpacity(0.3),
+                        color: const Color(white).withOpacity(0.3),
                       )
                   ),
                     child: Padding(
@@ -133,8 +133,8 @@ class _SettingPageState extends State<SettingPage> {
                       child: Align(alignment: Alignment.centerLeft,
                         child: TextField(
                           controller: serverUrlController,
-                          style: pretendard(FontWeight.w700, 24, Color(white)),
-                          decoration: InputDecoration(
+                          style: pretendard(FontWeight.w700, 24, const Color(white)),
+                          decoration: const InputDecoration(
                             border: InputBorder.none,
                           ),
                         ),
@@ -142,7 +142,7 @@ class _SettingPageState extends State<SettingPage> {
                     ),
                   ),
                 ],),
-                Container(height: 90, child: Align(alignment: Alignment.bottomCenter, child: Stack(children:[
+                SizedBox(height: 90, child: Align(alignment: Alignment.bottomCenter, child: Stack(children:[
                   Container(
                     height: 60,
                     decoration: BoxDecoration(
@@ -155,7 +155,7 @@ class _SettingPageState extends State<SettingPage> {
                     ],
                   ),
                   ),
-                  Container(
+                  SizedBox(
                     height: 60,
                     child: ClipRRect(
                       borderRadius: const BorderRadius.all(Radius.circular(15)),
@@ -183,14 +183,14 @@ class _SettingPageState extends State<SettingPage> {
                     },
                     child: Container(height: 60, decoration: BoxDecoration(
                       gradient: LinearGradient(
-                        colors: [Color(color1).withOpacity(0.5), Color(color1).withOpacity(0.5)],
+                        colors: [const Color(color1).withOpacity(0.5), const Color(color1).withOpacity(0.5)],
                         begin: Alignment.bottomLeft, end: Alignment.topRight,
                       ),
                       borderRadius: BorderRadius.circular(15),
                       border: Border.all(
-                        color: Color(white).withOpacity(0.3),
+                        color: const Color(white).withOpacity(0.3),
                       )
-                ),child: Center(child: Text("CHECK CONNECTION", style: TextStyle(
+                ),child: const Center(child: Text("CHECK CONNECTION", style: TextStyle(
                     color: Color(white),
                     fontFamily: "pretendard",
                     fontWeight: FontWeight.w700,
@@ -199,7 +199,7 @@ class _SettingPageState extends State<SettingPage> {
                 ),),),),
                   ),
                 ],),),),
-                Container(height: 90, child: Align(alignment: Alignment.bottomCenter, child: Stack(children:[
+                SizedBox(height: 90, child: Align(alignment: Alignment.bottomCenter, child: Stack(children:[
                   Container(
                     height: 60,
                     decoration: BoxDecoration(
@@ -212,7 +212,7 @@ class _SettingPageState extends State<SettingPage> {
                       ],
                     ),
                   ),
-                  Container(
+                  SizedBox(
                     height: 60,
                     child: ClipRRect(
                       borderRadius: const BorderRadius.all(Radius.circular(15)),
@@ -228,22 +228,22 @@ class _SettingPageState extends State<SettingPage> {
                         widget.memories.serverUrl = serverUrlController.text;
                         IotMemories.memoryUpdate();
                         IotRequest.setServerAddress(widget.memories.serverUrl);
-                        final snackBar = SnackBar(content: Text("Server URL is successfully changed."),);
+                        const snackBar = SnackBar(content: Text("Server URL is successfully changed."),);
                         ScaffoldMessenger.of(context).showSnackBar(snackBar);
-                        widget.addPageController.animateToPage(1, duration: Duration(milliseconds: animationDelayMilliseconds), curve: Curves.easeOut);
-                        Timer(Duration(milliseconds: 50), () => widget.addOverPageController.animateToPage(1, duration: Duration(milliseconds: animationDelayMilliseconds), curve: Curves.easeOut));
+                        widget.addPageController.animateToPage(1, duration: const Duration(milliseconds: animationDelayMilliseconds), curve: Curves.easeOut);
+                        Timer(const Duration(milliseconds: 50), () => widget.addOverPageController.animateToPage(1, duration: const Duration(milliseconds: animationDelayMilliseconds), curve: Curves.easeOut));
                       });
                     } : null,
-                    child: AnimatedContainer(duration: Duration(milliseconds: animationDelayMilliseconds), curve: Curves.easeOut, height: 60, decoration: BoxDecoration(
+                    child: AnimatedContainer(duration: const Duration(milliseconds: animationDelayMilliseconds), curve: Curves.easeOut, height: 60, decoration: BoxDecoration(
                         gradient: LinearGradient(
                           colors: [Color(changeAvailable? color2 : fadeOut).withOpacity(0.5), Color(changeAvailable? color1 : fadeOut).withOpacity(0.5)],
                           begin: Alignment.bottomLeft, end: Alignment.topRight,
                         ),
                         borderRadius: BorderRadius.circular(15),
                         border: Border.all(
-                          color: Color(white).withOpacity(0.3),
+                          color: const Color(white).withOpacity(0.3),
                         )
-                    ),child: Center(child: AnimatedDefaultTextStyle(duration: Duration(milliseconds: animationDelayMilliseconds), curve: Curves.easeOut,
+                    ),child: Center(child: AnimatedDefaultTextStyle(duration: const Duration(milliseconds: animationDelayMilliseconds), curve: Curves.easeOut,
                       style: TextStyle(
                         color: Color(changeAvailable? white: black).withOpacity(changeAvailable? 1: 0.3),
                         fontFamily: "pretendard",
@@ -251,7 +251,7 @@ class _SettingPageState extends State<SettingPage> {
                         fontSize:24,
                         height: 26/24,
                       ),
-                      child: Text("CHANGE URL"),
+                      child: const Text("CHANGE URL"),
                     ),),),
                   ),
                 ],),),),

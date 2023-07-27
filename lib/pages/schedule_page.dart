@@ -1,11 +1,10 @@
-import 'dart:math';
+// ignore_for_file: deprecated_member_use, depend_on_referenced_packages
+
 import 'dart:ui';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:gradient_borders/box_borders/gradient_box_border.dart';
 import 'package:myiot/components/constants.dart';
 import 'package:myiot/components/custom_grid.dart';
 import 'package:myiot/components/colors.dart';
-import 'package:myiot/components/custom_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:myiot/types/iot_memories.dart';
 
@@ -217,7 +216,7 @@ class _SchedulePageState extends State<SchedulePage> {
                 Expanded(
                   flex: 2,
                   child:
-                  Align(alignment: Alignment.centerLeft, child: Padding(padding: EdgeInsets.only(left:40), child: AnimatedDefaultTextStyle(
+                  Align(alignment: Alignment.centerLeft, child: Padding(padding: const EdgeInsets.only(left:40), child: AnimatedDefaultTextStyle(
                     style: TextStyle(
                       fontFamily: "pretendard",
                       fontWeight: FontWeight.w600,
@@ -234,7 +233,7 @@ class _SchedulePageState extends State<SchedulePage> {
                   flex: 1,
                   child:
                   Padding(
-                    padding: EdgeInsets.only(right:40),child:
+                    padding: const EdgeInsets.only(right:40),child:
                     Align(
                       alignment: Alignment.centerRight,
                       child: Stack(children: [

@@ -2,7 +2,6 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter/cupertino.dart';
-import 'package:myiot/types/iot_condition.dart';
 
 import 'module.dart';
 
@@ -111,18 +110,21 @@ class IotActionList {
   }
 
   String? getDescription() {
-    if(actions.isEmpty) return null;
-    else {
+    if(actions.isEmpty) {
+      return null;
+    } else {
       Module? module = actions[0].module;
       String str = "";
       if(actions[0].isTimeDelay) {
         str = "wait ${actions[0].delaySeconds.toStringAsFixed(1)} seconds";
       }
-      else if(module == null) return null;
-      else if(module.type == Module.ONOFF)
+      else if(module == null) {
+        return null;
+      } else if(module.type == Module.ONOFF) {
         str = "set ${module.moduleName} to ${actions[0].boolValue? "ON" : "OFF"}";
-      else
-        str =  "set ${module.moduleName} is ${module!.decimal? actions[0].doubleValue.toStringAsFixed(1): actions[0].doubleValue.round()}${module!.unit}";
+      } else {
+        str =  "set ${module.moduleName} is ${module.decimal? actions[0].doubleValue.toStringAsFixed(1): actions[0].doubleValue.round()}${module.unit}";
+      }
       if(actions.length > 1) str += "...";
       return str;
     }
