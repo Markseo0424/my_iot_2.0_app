@@ -38,7 +38,12 @@ class IotMemories {
   String serverUrl = "http://000.00.00.00:0000";
 
   void saveToPref() async {
-    preferences ??= await SharedPreferences.getInstance();
+    if(preferences == null) {
+      preferences = await SharedPreferences.getInstance();
+    }
+    else {
+      await preferences!.reload();
+    }
     String jsonString = '''{
       "serverUrl" : "$serverUrl",
       "moduleList" : ${jsonEncode(moduleList.toJson())},
@@ -48,9 +53,14 @@ class IotMemories {
   }
 
   Future<bool> getFromPref(void Function() atFinishLoad) async {
-    preferences = await SharedPreferences.getInstance();
+    if(preferences == null) {
+      preferences = await SharedPreferences.getInstance();
+    }
+    else {
+      await preferences!.reload();
+    }
     String? jsonString = preferences!.getString("savedData");
-    print("received Data : \n$jsonString");
+    //print("received Data : \n$jsonString");
     if(jsonString != null) {
       Map<String,dynamic> jsonData = jsonDecode(jsonString);
       List<Map<String,dynamic>> moduleJsonData = List<Map<String,dynamic>>.from(jsonData["moduleList"]??[]);
@@ -65,14 +75,14 @@ class IotMemories {
   }
 
   void printDebugMessage() {
-    print("=====memoryListener called.=====");
-    print("=====serverURL=====");
-    print(serverUrl);
-    print("=====modules=====");
-    print(jsonEncode(moduleList.toJson()));
-    print("=====schedules=====");
-    print(jsonEncode(scheduleList.toJson()));
-    print("--------------------------------");
+    //print("=====memoryListener called.=====");
+    //print("=====serverURL=====");
+    //print(serverUrl);
+    //print("=====modules=====");
+    //print(jsonEncode(moduleList.toJson()));
+    //print("=====schedules=====");
+    //print(jsonEncode(scheduleList.toJson()));
+    //print("--------------------------------");
   }
 
 }

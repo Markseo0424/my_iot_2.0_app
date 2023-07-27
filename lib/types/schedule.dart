@@ -34,7 +34,7 @@ class Schedule {
     if(!on) return;
     bool evaluation = conditionList.evaluate();
     if(evaluation && conditionList.isOnce) on = false;
-    print("${evaluation}");
+    //print("${evaluation}");
     if(evaluation) actionList.doActions(moduleChangeListener);
   }
 }
@@ -66,7 +66,7 @@ class ScheduleList {
 
   void evaluateSchedules(ValueNotifier<int> moduleChangeListener) {
     for(Schedule schedule in scheduleList){
-      print("evaluate schedule ${schedule.scheduleName} : ");
+      //print("evaluate schedule ${schedule.scheduleName} : ");
       schedule.evaluate(moduleChangeListener);
     }
   }

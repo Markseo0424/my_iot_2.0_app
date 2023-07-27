@@ -16,17 +16,17 @@ class IotCondition {
     isTimeCondition = jsonData["isTimeCondition"]??false;
     and = jsonData["and"]??0;
     if(isTimeCondition) {
-      timeRange = jsonData["time"]["timeRange"]??[0,0,24,0];
-      weekDays = jsonData["time"]["days"]??[false,false,false,false,false,false,false];
+      timeRange = List<int>.from(jsonData["time"]["timeRange"]??[0,0,24,0]);
+      weekDays = List<bool>.from(jsonData["time"]["days"]??[false,false,false,false,false,false,false]);
     }
     else {
-      _module = moduleList.findByID(jsonData["module"]["moduleId"]??"");
+      _module = moduleList.findByID(jsonData["module"]?["moduleId"]??"");
       if(_module == null) return;
       if(_module!.type == Module.ONOFF) {
-        _targetValue = jsonData["module"]["targetBool"]??false;
+        _targetValue = jsonData["module"]?["targetBool"]??false;
       }
       else {
-        _boundValue = jsonData["module"]["targetRange"]??<double>[0,100];
+        _boundValue = jsonData["module"]?["targetRange"]??<double>[0,100];
       }
     }
   }
@@ -98,7 +98,7 @@ class IotCondition {
 
   bool evaluate(){
     if(isTimeCondition) {
-      print("time condition");
+      //print("time condition");
       DateTime nowTime = DateTime.now();
       if(!ListCompare(weekDays, [false,false,false,false,false,false,false]) && !weekDays[nowTime.weekday]) return false;
       if(timeRange[0] > timeRange[2]) return false;
@@ -176,7 +176,7 @@ class IotConditionList {
     for(int i = 0; i < conditions.length; i++) {
       bool conditionEvaluation = conditions[i].evaluate();
       bool conditionAnd = conditions[i].and;
-      print("condition $i : $conditionEvaluation");
+      //print("condition $i : $conditionEvaluation");
       if(conditionEvaluation && !skip) stack.add(conditions[i]);
 
       if(previousAnd == false) {
@@ -213,7 +213,7 @@ class IotConditionList {
     _once = false;
     for(IotCondition condition in stack) {
       if(condition.isTimeCondition && condition.weekDays.reduce((a,b) => a || b) == false) _once = true;
-      print("once : ${_once}");
+      //print("once : ${_once}");
     }
 
     return evaluation;

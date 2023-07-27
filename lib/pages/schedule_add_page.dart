@@ -203,6 +203,7 @@ class _ScheduleAddPageState extends State<ScheduleAddPage> with TickerProviderSt
                       child: Center(
                         child: TextField(
                           controller: scheduleNameController,
+                          readOnly: conditionOpen || actionOpen,
                           style: pretendard(FontWeight.w700, 24, Color(white)),
                           decoration: InputDecoration(
                             border: InputBorder.none,

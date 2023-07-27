@@ -6,6 +6,7 @@ import "package:myiot/components/constants.dart";
 import "package:myiot/components/colors.dart";
 import "package:flutter_svg/flutter_svg.dart";
 import "package:myiot/types/iot_memories.dart";
+import "package:myiot/types/iot_request.dart";
 
 import "../types/module.dart";
 
@@ -202,17 +203,46 @@ class _ModuleAddPageState extends State<ModuleAddPage> {
                     bool doesIdExist = widget.moduleList.findByID(newID) != null;
                     bool doesNameExist = widget.moduleList.findByName(newName) != null;
 
-                    final snackBar = SnackBar(content: Text(doesNameExist? 'Same Name! Try again.' : (doesIdExist? 'Same ID! Try again.': 'Module successfully added.')),);
-                    ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                    IotRequest.sendNewRequest(newID, (jsonResponse) {
+                      if(jsonResponse["data"]?["result"] == "OK") {
+                        String newType = jsonResponse["data"]?["type"];
+                        String newValue = jsonResponse["data"]?["val"];
+                        newValue = newValue.split("~").join();
+                        List<String> values = newValue.split("_");
 
-                    if(!doesIdExist && !doesNameExist) {
-                      widget.module.moduleName = newName;
-                      widget.module.moduleId = newID;
-                      widget.moduleList.comp.add(widget.module);
-                      IotMemories.memoryUpdate();
-                      widget.addOverPageController.animateToPage(1, duration: Duration(milliseconds: animationDelayMilliseconds), curve: Curves.easeOut);
-                      Timer(Duration(milliseconds: 50), () {widget.addPageController.animateToPage(1, duration: Duration(milliseconds: animationDelayMilliseconds), curve: Curves.easeOut);});
-                    }
+
+                        if(newType == "onoff") {
+                          widget.module.type = Module.ONOFF;
+                          widget.module.onOffVal = (newValue == "ON")? true : false;
+                        }
+                        else if(newType == "slider") {
+                          widget.module.type = Module.SLIDER;
+                          widget.module.doubleVal = double.parse(values[0]);
+                          widget.module.setValueRange = <double>[double.parse(values[1]), double.parse(values[2])];
+                          widget.module.unit = values[3];
+                          widget.module.decimal = int.parse(values[4]) == 1;
+                        }
+                        else if(newType == "value") {
+                          widget.module.type = Module.VALUE;
+                        }
+
+                        final snackBar = SnackBar(content: Text(doesNameExist? 'Same Name! Try again.' : (doesIdExist? 'Same ID! Try again.': 'Module successfully added.')),);
+                        ScaffoldMessenger.of(context).showSnackBar(snackBar);
+
+                        if(!doesIdExist && !doesNameExist) {
+                          widget.module.moduleName = newName;
+                          widget.module.moduleId = newID;
+                          widget.moduleList.comp.add(widget.module);
+                          IotMemories.memoryUpdate();
+                          widget.addOverPageController.animateToPage(1, duration: Duration(milliseconds: animationDelayMilliseconds), curve: Curves.easeOut);
+                          Timer(Duration(milliseconds: 50), () {widget.addPageController.animateToPage(1, duration: Duration(milliseconds: animationDelayMilliseconds), curve: Curves.easeOut);});
+                        }
+                      }
+                      else {
+                        const snackBar = SnackBar(content: Text('Module is not availble. Try again.'));
+                        ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                      }
+                    });
                   }
                   else {
                     Module? foundByName = widget.moduleList.findByName(newName);
@@ -284,6 +314,13 @@ class _ModuleAddPageState extends State<ModuleAddPage> {
                   onTap: () {final snackBar = SnackBar(content: Text('Module successfully deleted.'),);
                   ScaffoldMessenger.of(context).showSnackBar(snackBar);
                   widget.moduleList.comp.remove(widget.module);
+                  IotRequest.sendDeleteRequest(moduleIdController.text, (p0) {
+                    if(p0["data"]?["result"] == "OK") {
+                      const snackBar = SnackBar(
+                          content: Text('Module is removed from server.'));
+                      ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                    }
+                  });
                   IotMemories.memoryUpdate();
                     widget.addOverPageController.animateToPage(1, duration: Duration(milliseconds: animationDelayMilliseconds), curve: Curves.easeOut);
                     Timer(Duration(milliseconds: 50), () {widget.addPageController.animateToPage(1, duration: Duration(milliseconds: animationDelayMilliseconds), curve: Curves.easeOut);});

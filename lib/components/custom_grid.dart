@@ -248,7 +248,7 @@ class _CustomGridState extends State<CustomGrid> {
 
   void sync() { //suppose one change at once
     if(widget.children == null) return;
-    if(_elements.length < widget.children!.length) {
+    if(_elements.length > widget.children!.length) {
       setState(() {
         List<GridElement> removedElements = [];
         for(GridElement element in _elements) {
@@ -262,7 +262,7 @@ class _CustomGridState extends State<CustomGrid> {
         }
       });
     }
-    else if(_elements.length > widget.children!.length) {
+    else if(_elements.length < widget.children!.length) {
       setState(() {
         for(GridElement element in widget.children!){
           if(!_elements.contains(element)) {

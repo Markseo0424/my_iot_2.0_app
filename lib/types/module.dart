@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:myiot/types/iot_memories.dart';
+import 'package:myiot/types/iot_request.dart';
 
 class Module {
   String moduleName = "";
@@ -69,17 +70,19 @@ class Module {
 
   bool sendRequest() {
     if(type==ONOFF){
-      print("set $moduleId to $onOffVal");
+      //print("set $moduleId to $onOffVal");
+      IotRequest.sendValRequest(moduleId, type==ONOFF?(onOffVal? "ON" : "OFF") : "${decimal? doubleVal.toStringAsFixed(1) : doubleVal.round()}", (p0) { });
       IotMemories.memoryUpdate();
       return true;
     }
     else if(type==SLIDER){
-      print("set $moduleId to $doubleVal");
+      //print("set $moduleId to $doubleVal");
+      IotRequest.sendValRequest(moduleId, type==ONOFF?(onOffVal? "ON" : "OFF") : "${decimal? doubleVal.toStringAsFixed(1) : doubleVal.round()}", (p0) { });
       IotMemories.memoryUpdate();
       return true;
     }
     else {
-      print("value of $moduleId is $doubleVal");
+      //print("value of $moduleId is $doubleVal");
       IotMemories.memoryUpdate();
       return true;
     }

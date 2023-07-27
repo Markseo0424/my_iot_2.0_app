@@ -1,4 +1,5 @@
 import "dart:async";
+import "dart:convert";
 import "dart:ui";
 
 import "package:flutter/material.dart";
@@ -7,6 +8,7 @@ import "package:myiot/components/colors.dart";
 import "package:flutter_svg/flutter_svg.dart";
 import "package:myiot/components/multi_hit_stack.dart";
 import "package:myiot/types/iot_memories.dart";
+import "package:myiot/types/iot_request.dart";
 
 import "../types/module.dart";
 
@@ -165,13 +167,19 @@ class _SettingPageState extends State<SettingPage> {
                   ),
                   GestureDetector(
                     onTap: (){
-                      if(true) {
-                        setState(() {
-                          final snackBar = SnackBar(content: Text("Server URL is available."),);
+                      IotRequest.sendValidRequest(useCustomIp: true, customIp: serverUrlController.text.split(":")[0], customPort: int.parse(serverUrlController.text.split(":")[1]), (jsonResponse) {
+                        if(jsonResponse["data"]?["result"] == "OK"){
+                          setState(() {
+                            changeAvailable = true;
+                            const snackBar = SnackBar(content: Text("Server URL is available."),);
+                            ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                          });
+                        }
+                        else {
+                          const snackBar = SnackBar(content: Text("ERROR! Server URL is not available."),);
                           ScaffoldMessenger.of(context).showSnackBar(snackBar);
-                          changeAvailable = true;
-                        });
-                      }
+                        }
+                      });
                     },
                     child: Container(height: 60, decoration: BoxDecoration(
                       gradient: LinearGradient(
@@ -219,6 +227,7 @@ class _SettingPageState extends State<SettingPage> {
                       setState(() {
                         widget.memories.serverUrl = serverUrlController.text;
                         IotMemories.memoryUpdate();
+                        IotRequest.setServerAddress(widget.memories.serverUrl);
                         final snackBar = SnackBar(content: Text("Server URL is successfully changed."),);
                         ScaffoldMessenger.of(context).showSnackBar(snackBar);
                         widget.addPageController.animateToPage(1, duration: Duration(milliseconds: animationDelayMilliseconds), curve: Curves.easeOut);

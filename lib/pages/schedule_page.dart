@@ -16,11 +16,12 @@ class SchedulePage extends StatefulWidget {
   final bool isEditable;
   final ScheduleList scheduleList;
   final void Function(Schedule clickedSchedule) onEditSchedule;
+  final ValueNotifier<int> moduleChangeListener;
   
   const SchedulePage({
     required this.page,
     required this.isEditable,
-    Key? key, required this.scheduleList, required this.onEditSchedule,
+    Key? key, required this.scheduleList, required this.onEditSchedule, required this.moduleChangeListener,
   }) : super(key:key);
 
   @override
@@ -46,58 +47,61 @@ class _SchedulePageState extends State<SchedulePage> {
 
     return Scaffold(
       backgroundColor: Colors.transparent,
-      body: Stack(
-        children: [
-          Container(
-            height: 150,
-            transform: Matrix4.identity()..rotateZ(-widget.page*0.5)..translate(-100*widget.page),
-            margin: const EdgeInsets.only(
-              bottom: 30,
-              left: 15,
-              right: 15,
+      body: ValueListenableBuilder<int>(
+        valueListenable: widget.moduleChangeListener,
+        builder: (context, _, __) =>  Stack(
+          children: [
+            Container(
+              height: 150,
+              transform: Matrix4.identity()..rotateZ(-widget.page*0.5)..translate(-100*widget.page),
+              margin: const EdgeInsets.only(
+                bottom: 30,
+                left: 15,
+                right: 15,
+              ),
+              child: const Align(
+                  alignment: Alignment.bottomLeft,
+                  child: Text(
+                      "SCHEDULES",
+                      style: TextStyle(
+                        fontFamily: "pretendard",
+                        color: Color(white),
+                        fontSize: 50,
+                        fontWeight: FontWeight.w700,
+                      )
+                  )
+              ),
             ),
-            child: const Align(
-                alignment: Alignment.bottomLeft,
-                child: Text(
-                    "SCHEDULES",
-                    style: TextStyle(
-                      fontFamily: "pretendard",
-                      color: Color(white),
-                      fontSize: 50,
-                      fontWeight: FontWeight.w700,
-                    )
-                )
-            ),
-          ),
-          Container(
-            margin: const EdgeInsets.only(top: 180),
-            child: CustomGrid(
-              isSquare: false,
-              hGridStandard: 400,
-              vGridStandard: 100,
-              page: widget.page,
-              reOrderable: widget.isEditable,
-              atReorder: (reorderList){
-                widget.scheduleList.reOrder(reorderList);
-                IotMemories.memoryUpdate();
-              },
-              children: [
-                ...widget.scheduleList.scheduleList.map((schedule) {
-                  return renderSchedule(scheduleName: schedule.scheduleName, onOff: schedule.on, onTap: () {
-                    setState(() {
-                      if(widget.isEditable) {
-                        widget.onEditSchedule(schedule);
-                      } else {
-                        schedule.on = !schedule.on;
-                        IotMemories.memoryUpdate();
-                      }
+            Container(
+              margin: const EdgeInsets.only(top: 180),
+              child: CustomGrid(
+                isSquare: false,
+                hGridStandard: 400,
+                vGridStandard: 100,
+                page: widget.page,
+                reOrderable: widget.isEditable,
+                atReorder: (reorderList){
+                  widget.scheduleList.reOrder(reorderList);
+                  IotMemories.memoryUpdate();
+                },
+                children: [
+                  ...widget.scheduleList.scheduleList.map((schedule) {
+                    return renderSchedule(scheduleName: schedule.scheduleName, onOff: schedule.on, onTap: () {
+                      setState(() {
+                        if(widget.isEditable) {
+                          widget.onEditSchedule(schedule);
+                        } else {
+                          schedule.on = !schedule.on;
+                          IotMemories.memoryUpdate();
+                        }
+                      });
                     });
-                  });
-                }
-                ).toList(),
-              ],),
-          ),
-        ],
+                  }
+                  ).toList(),
+                ],),
+            ),
+          ],
+        ),
       ),
     );
   }
