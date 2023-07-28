@@ -459,6 +459,8 @@ class _ScheduleAddPageState extends State<ScheduleAddPage> with TickerProviderSt
                     onTap: () {
                       widget.scheduleList.scheduleList.remove(widget.schedule);
                       IotMemories.memoryUpdate();
+                      const snackBar = SnackBar(content: Text("Schedule successfully deleted."),);
+                      ScaffoldMessenger.of(context).showSnackBar(snackBar);
                       widget.addOverPageController.animateToPage(1, duration: const Duration(milliseconds: animationDelayMilliseconds), curve: Curves.easeOut);
                       Timer(const Duration(milliseconds: 50), () {widget.addPageController.animateToPage(1, duration: const Duration(milliseconds: animationDelayMilliseconds), curve: Curves.easeOut);});
                     },

@@ -2,11 +2,7 @@
 
 import 'dart:async';
 import 'dart:math';
-import 'dart:ui';
 
-import 'package:flutter/foundation.dart';
-import 'package:flutter_background_service/flutter_background_service.dart';
-import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:myiot/components/constants.dart';
 import 'package:myiot/components/custom_appbar.dart';
 import 'package:myiot/components/multi_hit_stack.dart';
@@ -87,10 +83,6 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin{
           //SharedPreferences? preferences = await SharedPreferences.getInstance();
           //print(preferences.getString("savedData"));*/
         });
-
-        if(defaultTargetPlatform == TargetPlatform.android) {
-          initializeService();
-        }
         //print("finished load");
       });
     });
@@ -436,70 +428,4 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin{
         color: color
     );
   }
-}
-
-
-const notificationChannelId = 'background_iot';
-const notificationId = 820;
-
-Future<void> initializeService() async {
-  final service = FlutterBackgroundService();
-
-  const AndroidNotificationChannel channel = AndroidNotificationChannel(
-    notificationChannelId, 'MYIOT FOREGROUND SERVICE',
-    description:
-    'foreground service for schedule',
-    importance: Importance.low,
-  );
-
-  final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
-
-  await flutterLocalNotificationsPlugin.resolvePlatformSpecificImplementation<AndroidFlutterLocalNotificationsPlugin>()?.createNotificationChannel(channel);
-
-  await service.configure(
-      iosConfiguration: IosConfiguration(),
-      androidConfiguration: AndroidConfiguration(
-        onStart: onStart,
-
-        autoStart: true,
-        isForegroundMode: true,
-
-        notificationChannelId: notificationChannelId,
-        initialNotificationTitle: 'myIOT foreground service',
-        initialNotificationContent: 'running',
-        foregroundServiceNotificationId: notificationId,
-
-      ));
-}
-
-Future<void> onStart(ServiceInstance service) async {
-  DartPluginRegistrant.ensureInitialized();
-
-  //final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
-  IotBackgroundService backgroundService = IotBackgroundService();
-  IotMemories backgroundMemories = IotMemories();
-
-
-  backgroundMemories.getFromPref(() {
-    IotRequest.setServerAddress(backgroundMemories.serverUrl);
-    backgroundService.initializeBackgroundService(
-      memories: backgroundMemories,
-      modules: backgroundMemories.moduleList,
-      schedules: backgroundMemories.scheduleList,
-    );
-  });
-
-  Timer.periodic(const Duration(seconds: 50), (timer) async {
-    //print("background alive!");
-    backgroundMemories.getFromPref(() {
-      IotRequest.setServerAddress(backgroundMemories.serverUrl);
-      backgroundService.initializeBackgroundService(
-        memories: backgroundMemories,
-        modules: backgroundMemories.moduleList,
-        schedules: backgroundMemories.scheduleList,
-      );
-      backgroundService.synchronize();
-    });
-  }
-  );
 }

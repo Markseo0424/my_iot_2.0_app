@@ -1,5 +1,20 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
     <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE"/>
+    <uses-permission android:name="android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS"/>
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+
+    <!-- Intent android.intent.action.BOOT_COMPLETED is received after a "cold" boot. -->
+    <uses-permission android:name="android.permission.BOOT_COMPLETED" />
+
+    <!-- Intent android.intent.action.QUICKBOOT_POWERON is received after a "restart" or a "reboot". -->
+    <uses-permission android:name="android.permission.QUICKBOOT_POWERON" />
+
+    <!-- Allows using PowerManager WakeLocks to keep processor from sleeping or screen from dimming. -->
+    <uses-permission android:name="android.permission.WAKE_LOCK"/>
+
+    <!-- Allows applications to access information about networks. -->
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <application
         android:label="myIOT 2.0"
         android:name="${applicationName}"
