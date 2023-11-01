@@ -99,7 +99,7 @@ class IotCondition {
     if(isTimeCondition) {
       //print("time condition");
       DateTime nowTime = DateTime.now();
-      if(!listCompare(weekDays, [false,false,false,false,false,false,false]) && !weekDays[nowTime.weekday]) return false;
+      if(!listCompare(weekDays, [false,false,false,false,false,false,false]) && !weekDays[nowTime.weekday - 1]) return false;
       if(timeRange[0] > timeRange[2]) return false;
       if(timeRange[0] == timeRange[2] && timeRange[1] > timeRange[3]) return false;
       if(nowTime.hour > timeRange[0] && nowTime.hour < timeRange[2]) return true;
